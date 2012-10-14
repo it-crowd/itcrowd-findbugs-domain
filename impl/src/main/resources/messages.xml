@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MessageCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="messagecollection.xsd">
+
+    <Plugin>
+        <ShortDescription>FindBugs IT Crowd domain annotation checks Plugin</ShortDescription>
+        <Details>IT Crowd domain annotation checks</Details>
+    </Plugin>
+
+    <Detector class="pl.com.it_crowd.findbugs.NotNullInconsistency">
+        <Details>
+            NotNullInconsistency
+        </Details>
+    </Detector>
+    <Detector class="pl.com.it_crowd.findbugs.NotEmptyInconsistency">
+        <Details>
+            NotEmptyInconsistency
+        </Details>
+    </Detector>
+
+    <BugPattern type="NOT_NULL_INCONSISTENCY">
+        <ShortDescription>@NotNull inconsistency</ShortDescription>
+        <LongDescription>@NotNull used for nullable column or not-null column misses @NotNull annotation on {1}</LongDescription>
+        <Details>
+            <![CDATA[
+<p>Nullable properties should not be annotated @NotNull, while not nullable properties should.</p>
+]]>
+        </Details>
+    </BugPattern>
+
+    <BugPattern type="NOT_EMPTY_INCONSISTENCY">
+        <ShortDescription>@NotEmpty inconsistency</ShortDescription>
+        <LongDescription>@NotEmpty used for nullable column or not-null String/array column misses @NotEmpty annotation on {1}</LongDescription>
+        <Details>
+            <![CDATA[
+<p>Nullable properties should not be annotated @NotEmpty, while not nullable String/array properties should.</p>
+]]>
+        </Details>
+    </BugPattern>
+
+    <BugCode abbrev="NNI">NotNull Inconsistency</BugCode>
+    <BugCode abbrev="NEI">NotEmpty Inconsistency</BugCode>
+</MessageCollection>

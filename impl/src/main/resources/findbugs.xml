@@ -1,0 +1,9 @@
+<FindbugsPlugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="findbugsplugin.xsd"
+                pluginid="pl.com.it_crowd.findbugs.NotNullInconsistency" provider="IT Crowd" website="http://itcrowd.pl/itcrowd-findbugs">
+
+    <Detector class="pl.com.it_crowd.findbugs.NotNullInconsistency" reports="NOT_NULL_INCONSISTENCY"/>
+    <Detector class="pl.com.it_crowd.findbugs.NotEmptyInconsistency" reports="NOT_EMPTY_INCONSISTENCY"/>
+    <BugPattern type="NOT_NULL_INCONSISTENCY" abbrev="NNI" category="CORRECTNESS"/>
+    <BugPattern type="NOT_EMPTY_INCONSISTENCY" abbrev="NEI" category="CORRECTNESS"/>
+
+</FindbugsPlugin>

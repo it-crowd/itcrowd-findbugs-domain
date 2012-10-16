@@ -57,11 +57,6 @@ public class NotEmptyTestingEntity {
     @Column(nullable = false)
     private List collectionAttributeE;
 
-    //    TODO	@Size's max is not in sync with column length, is missing or applied to wrong type on column or @Size annotation is missing on pl.com.it_crowd.findbugs.NotEmptyTestingEntity.intAttributeA
-//
-//    TODO	@Size's max is not in sync with column length, is missing or applied to wrong type on column or @Size annotation is missing on pl.com.it_crowd.findbugs.NotEmptyTestingEntity.intAttributeC
-//
-//    TODO	@Size's max is not in sync with column length, is missing or applied to wrong type on column or @Size annotation is missing on pl.com.it_crowd.findbugs.SizeTestinEntity.d
     @NotEmpty
     @Column(nullable = true)
     private int intAttributeA;

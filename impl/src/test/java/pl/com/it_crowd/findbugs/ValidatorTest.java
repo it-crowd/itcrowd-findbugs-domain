@@ -33,7 +33,7 @@ public class ValidatorTest {
             mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN));
         final Field fieldI = mockField("Ljava/lang/String;", mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN));
         final Field fieldJ = mockField("Ljava/lang/String;", mockAnnotationEntry(JAVAX_VALIDATION_CONSTRAINTS_NOT_EMPTY),
-            mockAnnotationEntry("Lorg.junit.Test;"));
+            mockAnnotationEntry("Lorg/junit/Test;"));
 
 
 //        When
@@ -79,7 +79,7 @@ public class ValidatorTest {
             mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN));
         final Field fieldI = mockField("Ljava/lang/String;", mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN));
         final Field fieldJ = mockField("Ljava/lang/String;", mockAnnotationEntry(JAVAX_VALIDATION_CONSTRAINTS_NOT_NULL),
-            mockAnnotationEntry("Lorg.junit.Test;"));
+            mockAnnotationEntry("Lorg/junit/Test;"));
         final Field fieldK = mockField("Ljava/lang/String;", mockAnnotationEntry(JAVAX_VALIDATION_CONSTRAINTS_NOT_NULL),
             mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN, "nullable=false"));
 
@@ -130,7 +130,7 @@ public class ValidatorTest {
             mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN, "length=30"));
         final Field fieldI = mockField("Ljava/lang/String;", mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN));
         final Field fieldJ = mockField("Ljava/lang/String;", mockAnnotationEntry(JAVAX_VALIDATION_CONSTRAINTS_SIZE, "max=30"),
-            mockAnnotationEntry("Lorg.junit.Test;", "timeout=30"));
+            mockAnnotationEntry("Lorg/junit/Test;", "timeout=30"));
         final Field fieldK = mockField("I", mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN, "nullable=true"));
 
 

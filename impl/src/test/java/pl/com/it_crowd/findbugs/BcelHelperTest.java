@@ -29,8 +29,8 @@ public class BcelHelperTest {
     public void getAnnotationPropertyValue() throws Exception
     {
 //        Given
-        final AnnotationEntry entryA = mockAnnotationEntry("javax.persistence.Column", "nullable=true");
-        final AnnotationEntry entryB = mockAnnotationEntry("javax.persistence.Column", "name=PASSWORD_DIGEST", "nullable=false", "length=35");
+        final AnnotationEntry entryA = mockAnnotationEntry(Annotations.JAVAX_PERSISTENCE_COLUMN, "nullable=true");
+        final AnnotationEntry entryB = mockAnnotationEntry(Annotations.JAVAX_PERSISTENCE_COLUMN, "name=PASSWORD_DIGEST", "nullable=false", "length=35");
 
 //        When
         final String valueAnullable = BcelHelper.getAnnotationPropertyValue(entryA, "nullable");
@@ -140,7 +140,7 @@ public class BcelHelperTest {
 //        Given
         final AnnotationEntry entryA = mockAnnotationEntry(Annotations.JAVAX_PERSISTENCE_COLUMN);
         final AnnotationEntry entryB = mockAnnotationEntry(Annotations.JAVAX_PERSISTENCE_JOIN_COLUMN);
-        final AnnotationEntry entryC = mockAnnotationEntry("Ljavax.persistence.GeneratedValue;");
+        final AnnotationEntry entryC = mockAnnotationEntry("Ljavax/persistence/GeneratedValue;");
 
 //        When
         final boolean valueA = BcelHelper.isJavaxPersistenceColumnOrJoinColumn(entryA);

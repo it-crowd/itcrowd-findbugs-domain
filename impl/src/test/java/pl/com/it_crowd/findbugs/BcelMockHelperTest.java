@@ -9,7 +9,9 @@ import org.junit.Test;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public final class BcelMockHelperTest {
 // -------------------------- OTHER METHODS --------------------------
@@ -18,14 +20,19 @@ public final class BcelMockHelperTest {
     public void mockAnnotationEntry()
     {
         //        Given
-        final AnnotationEntry entryA = BcelMockHelper.mockAnnotationEntry("javax.persistence.Column", true, "nullable=true");
-        final AnnotationEntry entryB = BcelMockHelper.mockAnnotationEntry("javax.persistence.Column", true, "name=EMAIL", "nullable=true");
+        final AnnotationEntry entryA = BcelMockHelper.mockAnnotationEntry(Annotations.JAVAX_PERSISTENCE_COLUMN, true, "nullable=true");
+        final AnnotationEntry entryB = BcelMockHelper.mockAnnotationEntry(Annotations.JAVAX_PERSISTENCE_COLUMN, false, "name=EMAIL", "nullable=true");
+        final AnnotationEntry entryC = BcelMockHelper.mockAnnotationEntry(Annotations.JAVAX_PERSISTENCE_COLUMN, "name=EMAIL", "nullable=true");
 
         //        When
         final ElementValuePair[] elementValuePairsA = entryA.getElementValuePairs();
         final ElementValuePair[] elementValuePairsB = entryB.getElementValuePairs();
+        final boolean runtimeVisibleA = entryA.isRuntimeVisible();
+        final boolean runtimeVisibleB = entryB.isRuntimeVisible();
+        final boolean runtimeVisibleC = entryC.isRuntimeVisible();
 
         //        Then
+        assertTrue(runtimeVisibleA);
         assertNotNull(elementValuePairsA);
         assertEquals(1, elementValuePairsA.length);
         assertNotNull(elementValuePairsA[0]);
@@ -33,6 +40,7 @@ public final class BcelMockHelperTest {
         assertNotNull(elementValuePairsA[0].getValue());
         assertEquals("true", elementValuePairsA[0].getValue().stringifyValue());
         //--
+        assertFalse(runtimeVisibleB);
         assertNotNull(elementValuePairsB);
         assertEquals(2, elementValuePairsB.length);
         assertNotNull(elementValuePairsB[0]);
@@ -43,6 +51,8 @@ public final class BcelMockHelperTest {
         assertEquals("nullable", elementValuePairsB[1].getNameString());
         assertNotNull(elementValuePairsB[1].getValue());
         assertEquals("true", elementValuePairsB[1].getValue().stringifyValue());
+        //--
+        assertTrue(runtimeVisibleC);
     }
 
     @Test
@@ -50,8 +60,8 @@ public final class BcelMockHelperTest {
     {
 //        Given
         final Field fieldA = BcelMockHelper.mockField("Ljava/lang/String;");
-        final String expectedAnnotaionType = "org.junit.Test";
-        final String expectedAnnotaionType2 = "javax.persistence.Column";
+        final String expectedAnnotaionType = "Lorg/junit/Test;";
+        final String expectedAnnotaionType2 = Annotations.JAVAX_PERSISTENCE_COLUMN;
         final Field fieldB = BcelMockHelper.mockField("Ljava/util/Collection;",
             BcelMockHelper.mockAnnotationEntry(expectedAnnotaionType, "timeout=23", "wtf=ftw"),
             BcelMockHelper.mockAnnotationEntry(expectedAnnotaionType2, "name=ID"));

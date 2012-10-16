@@ -58,5 +58,5 @@ public abstract class EntityAnnotationDetector extends BytecodeScanningDetector 
 
     protected abstract String getBugType();
 
-    protected abstract boolean isInvalid(FieldOrMethod obj);
+    protected abstract boolean isInvalid(FieldOrMethod member);
 }

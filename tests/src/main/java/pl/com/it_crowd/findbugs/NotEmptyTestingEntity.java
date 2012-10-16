@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashMap;
@@ -56,6 +57,22 @@ public class NotEmptyTestingEntity {
     @Column(nullable = false)
     private List collectionAttributeE;
 
+    //    TODO	@Size's max is not in sync with column length, is missing or applied to wrong type on column or @Size annotation is missing on pl.com.it_crowd.findbugs.NotEmptyTestingEntity.intAttributeA
+//
+//    TODO	@Size's max is not in sync with column length, is missing or applied to wrong type on column or @Size annotation is missing on pl.com.it_crowd.findbugs.NotEmptyTestingEntity.intAttributeC
+//
+//    TODO	@Size's max is not in sync with column length, is missing or applied to wrong type on column or @Size annotation is missing on pl.com.it_crowd.findbugs.SizeTestinEntity.d
+    @NotEmpty
+    @Column(nullable = true)
+    private int intAttributeA;
+
+    @NotEmpty
+    private int intAttributeB;
+
+    @NotEmpty
+    @Column(nullable = false)
+    private int intAttributeC;
+
     @NotEmpty
     @Column(nullable = true)
     private Map mapAttributeA;
@@ -88,6 +105,7 @@ public class NotEmptyTestingEntity {
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
+    @Size(max = 255)
     @NotEmpty
     @Column(nullable = true)
     public String getStringAttributeA()
@@ -100,6 +118,7 @@ public class NotEmptyTestingEntity {
         this.stringAttributeA = stringAttributeA;
     }
 
+    @Size(max = 255)
     @NotNull
     @NotEmpty
     @Column(nullable = false)
@@ -113,6 +132,7 @@ public class NotEmptyTestingEntity {
         this.stringAttributeB = stringAttributeB;
     }
 
+    @Size(max = 255)
     @NotEmpty
     @Column
     public String getStringAttributeC()
@@ -136,6 +156,7 @@ public class NotEmptyTestingEntity {
         this.stringAttributeD = stringAttributeD;
     }
 
+    @Size(max = 255)
     @NotNull
     @Column(nullable = false)
     public String getStringAttributeE()

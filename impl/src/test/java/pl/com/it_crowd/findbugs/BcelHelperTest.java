@@ -1,13 +1,11 @@
+package pl.com.it_crowd.findbugs;
+
 import org.apache.bcel.Constants;
-import org.apache.bcel.classfile.AnnotationElementValue;
 import org.apache.bcel.classfile.AnnotationEntry;
-import org.apache.bcel.classfile.Constant;
-import org.apache.bcel.classfile.ConstantPool;
 import org.apache.bcel.classfile.ConstantUtf8;
-import org.apache.bcel.classfile.ElementValuePair;
+import org.apache.bcel.classfile.Field;
 import org.apache.bcel.generic.Type;
 import org.junit.Test;
-import pl.com.it_crowd.findbugs.BcelHelper;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -16,15 +14,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static pl.com.it_crowd.findbugs.BcelMockHelper.mockAnnotationEntry;
+import static pl.com.it_crowd.findbugs.BcelMockHelper.mockConstantPool;
 
 public class BcelHelperTest {
 // -------------------------- OTHER METHODS --------------------------
@@ -33,8 +29,8 @@ public class BcelHelperTest {
     public void getAnnotationPropertyValue() throws Exception
     {
 //        Given
-        final AnnotationEntry entryA = mockAnnotationEntry("javax.persistence.Column", true, "nullable=true");
-        final AnnotationEntry entryB = mockAnnotationEntry("javax.persistence.Column", true, "name=PASSWORD_DIGEST", "nullable=false", "length=35");
+        final AnnotationEntry entryA = mockAnnotationEntry("javax.persistence.Column", "nullable=true");
+        final AnnotationEntry entryB = mockAnnotationEntry("javax.persistence.Column", "name=PASSWORD_DIGEST", "nullable=false", "length=35");
 
 //        When
         final String valueAnullable = BcelHelper.getAnnotationPropertyValue(entryA, "nullable");
@@ -51,6 +47,19 @@ public class BcelHelperTest {
         assertEquals("35", valueBlength);
         assertNull(valueBnonexistent);
         assertNull(valueBnull);
+    }
+
+    @Test
+    public void getType() throws Exception
+    {
+//        Given
+        final Field field = new Field(0, 0, 1, null, mockConstantPool(1, Constants.CONSTANT_Utf8, new ConstantUtf8("Ljava/lang/String;")));
+
+//        When
+        final Type type = BcelHelper.getType(field);
+
+//        Then
+        assertEquals(Type.getType(String.class), type);
     }
 
     @Test
@@ -110,6 +119,57 @@ public class BcelHelperTest {
     }
 
     @Test
+    public void isJavaxPersistenceColumn() throws Exception
+    {
+//        Given
+        final AnnotationEntry entryA = mockAnnotationEntry(Annotations.JAVAX_PERSISTENCE_COLUMN);
+        final AnnotationEntry entryB = mockAnnotationEntry(Annotations.JAVAX_PERSISTENCE_JOIN_COLUMN);
+
+//        When
+        final boolean valueA = BcelHelper.isJavaxPersistenceColumn(entryA);
+        final boolean valueB = BcelHelper.isJavaxPersistenceColumn(entryB);
+
+//        Then
+        assertTrue(valueA);
+        assertFalse(valueB);
+    }
+
+    @Test
+    public void isJavaxPersistenceColumnOrJoinColumn() throws Exception
+    {
+//        Given
+        final AnnotationEntry entryA = mockAnnotationEntry(Annotations.JAVAX_PERSISTENCE_COLUMN);
+        final AnnotationEntry entryB = mockAnnotationEntry(Annotations.JAVAX_PERSISTENCE_JOIN_COLUMN);
+        final AnnotationEntry entryC = mockAnnotationEntry("Ljavax.persistence.GeneratedValue;");
+
+//        When
+        final boolean valueA = BcelHelper.isJavaxPersistenceColumnOrJoinColumn(entryA);
+        final boolean valueB = BcelHelper.isJavaxPersistenceColumnOrJoinColumn(entryB);
+        final boolean valueC = BcelHelper.isJavaxPersistenceColumnOrJoinColumn(entryC);
+
+//        Then
+        assertTrue(valueA);
+        assertTrue(valueB);
+        assertFalse(valueC);
+    }
+
+    @Test
+    public void isJavaxPersistenceJoinColumn() throws Exception
+    {
+//        Given
+        final AnnotationEntry entryA = mockAnnotationEntry(Annotations.JAVAX_PERSISTENCE_COLUMN);
+        final AnnotationEntry entryB = mockAnnotationEntry(Annotations.JAVAX_PERSISTENCE_JOIN_COLUMN);
+
+//        When
+        final boolean valueA = BcelHelper.isJavaxPersistenceJoinColumn(entryA);
+        final boolean valueB = BcelHelper.isJavaxPersistenceJoinColumn(entryB);
+
+//        Then
+        assertFalse(valueA);
+        assertTrue(valueB);
+    }
+
+    @Test
     public void isMap() throws Exception
     {
 //        Given
@@ -157,62 +217,5 @@ public class BcelHelperTest {
         assertTrue(resultB);
         assertFalse(resultC);
         assertFalse(resultD);
-    }
-
-    @Test
-    public void mockAnnotationEntry()
-    {
-//        Given
-        final AnnotationEntry entryA = mockAnnotationEntry("javax.persistence.Column", true, "nullable=true");
-        final AnnotationEntry entryB = mockAnnotationEntry("javax.persistence.Column", true, "name=EMAIL", "nullable=true");
-
-//        When
-        final ElementValuePair[] elementValuePairsA = entryA.getElementValuePairs();
-        final ElementValuePair[] elementValuePairsB = entryB.getElementValuePairs();
-
-//        Then
-        assertNotNull(elementValuePairsA);
-        assertEquals(1, elementValuePairsA.length);
-        assertNotNull(elementValuePairsA[0]);
-        assertEquals("nullable", elementValuePairsA[0].getNameString());
-        assertNotNull(elementValuePairsA[0].getValue());
-        assertEquals("true", elementValuePairsA[0].getValue().stringifyValue());
-        //--
-        assertNotNull(elementValuePairsB);
-        assertEquals(2, elementValuePairsB.length);
-        assertNotNull(elementValuePairsB[0]);
-        assertEquals("name", elementValuePairsB[0].getNameString());
-        assertNotNull(elementValuePairsB[0].getValue());
-        assertEquals("EMAIL", elementValuePairsB[0].getValue().stringifyValue());
-        assertNotNull(elementValuePairsB[1]);
-        assertEquals("nullable", elementValuePairsB[1].getNameString());
-        assertNotNull(elementValuePairsB[1].getValue());
-        assertEquals("true", elementValuePairsB[1].getValue().stringifyValue());
-    }
-
-    private AnnotationEntry mockAnnotationEntry(String annotationType, boolean runtimeVisible, String... properties)
-    {
-        final AnnotationEntry entry = mock(AnnotationEntry.class);
-        when(entry.getAnnotationType()).thenReturn(annotationType);
-        when(entry.isRuntimeVisible()).thenReturn(runtimeVisible);
-        final ArrayList<ElementValuePair> elementValuePairs = new ArrayList<ElementValuePair>();
-        for (String property : properties) {
-            final StringTokenizer tokenizer = new StringTokenizer(property, "=");
-            final String key = tokenizer.nextToken();
-            final String value = tokenizer.nextToken();
-            final AnnotationElementValue elementValue = mock(AnnotationElementValue.class);
-            when(elementValue.stringifyValue()).thenReturn(value);
-            final ElementValuePair pair = new ElementValuePair(0, elementValue, mockConstantPool(0, Constants.CONSTANT_Utf8, new ConstantUtf8(key)));
-            elementValuePairs.add(pair);
-        }
-        when(entry.getElementValuePairs()).thenReturn(elementValuePairs.toArray(new ElementValuePair[elementValuePairs.size()]));
-        return entry;
-    }
-
-    private ConstantPool mockConstantPool(int index, byte tag, final Constant value)
-    {
-        final ConstantPool pool = mock(ConstantPool.class);
-        when(pool.getConstant(index, tag)).thenReturn(value);
-        return pool;
     }
 }

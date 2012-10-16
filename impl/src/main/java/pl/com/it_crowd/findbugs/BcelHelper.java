@@ -2,6 +2,9 @@ package pl.com.it_crowd.findbugs;
 
 import org.apache.bcel.classfile.AnnotationEntry;
 import org.apache.bcel.classfile.ElementValuePair;
+import org.apache.bcel.classfile.Field;
+import org.apache.bcel.classfile.FieldOrMethod;
+import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ArrayType;
 import org.apache.bcel.generic.ObjectType;
 import org.apache.bcel.generic.Type;
@@ -36,6 +39,21 @@ public final class BcelHelper {
         return null;
     }
 
+    public static String getAnnotationPropertyValue(AnnotationEntry entry, String propertyName, Object defaultValue)
+    {
+        final String value = getAnnotationPropertyValue(entry, propertyName);
+        return value == null ? (defaultValue == null ? null : defaultValue.toString()) : value;
+    }
+
+    public static Type getType(FieldOrMethod obj)
+    {
+        if (obj instanceof Field) {
+            return ((Field) obj).getType();
+        } else {
+            return ((Method) obj).getReturnType();
+        }
+    }
+
     public static boolean isArray(Type type)
     {
         return type instanceof ArrayType;
@@ -52,7 +70,17 @@ public final class BcelHelper {
 
     public static boolean isJavaxPersistenceColumn(AnnotationEntry entry)
     {
-        return entry != null && "Ljavax/persistence/Column;".equals(entry.getAnnotationType());
+        return entry != null && Annotations.JAVAX_PERSISTENCE_COLUMN.equals(entry.getAnnotationType());
+    }
+
+    public static boolean isJavaxPersistenceColumnOrJoinColumn(AnnotationEntry entry)
+    {
+        return isJavaxPersistenceColumn(entry) || isJavaxPersistenceJoinColumn(entry);
+    }
+
+    public static boolean isJavaxPersistenceJoinColumn(AnnotationEntry entry)
+    {
+        return entry != null && Annotations.JAVAX_PERSISTENCE_JOIN_COLUMN.equals(entry.getAnnotationType());
     }
 
     public static boolean isMap(Type type)

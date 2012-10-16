@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashMap;
@@ -86,8 +87,8 @@ public class NotNullTestingEntity {
 
     private String stringAttributeE;
 
-// --------------------- GETTER / SETTER METHODS ---------------------
-
+    // --------------------- GETTER / SETTER METHODS ---------------------
+    @Size(max = 255)
     @NotNull
     @Column(nullable = true)
     public String getStringAttributeA()
@@ -100,6 +101,7 @@ public class NotNullTestingEntity {
         this.stringAttributeA = stringAttributeA;
     }
 
+    @Size(max = 255)
     @NotEmpty
     @NotNull
     @Column(nullable = false)
@@ -113,6 +115,7 @@ public class NotNullTestingEntity {
         this.stringAttributeB = stringAttributeB;
     }
 
+    @Size(max = 255)
     @NotNull
     @Column
     public String getStringAttributeC()
@@ -136,6 +139,7 @@ public class NotNullTestingEntity {
         this.stringAttributeD = stringAttributeD;
     }
 
+    @Size(max = 255)
     @NotEmpty
     @Column(nullable = false)
     public String getStringAttributeE()

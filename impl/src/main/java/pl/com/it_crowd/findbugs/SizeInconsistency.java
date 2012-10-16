@@ -3,10 +3,10 @@ package pl.com.it_crowd.findbugs;
 import edu.umd.cs.findbugs.BugReporter;
 import org.apache.bcel.classfile.FieldOrMethod;
 
-public class NotEmptyInconsistency extends EntityAnnotationDetector {
+public class SizeInconsistency extends EntityAnnotationDetector {
 // --------------------------- CONSTRUCTORS ---------------------------
 
-    public NotEmptyInconsistency(BugReporter bugReporter)
+    public SizeInconsistency(BugReporter bugReporter)
     {
         super(bugReporter);
     }
@@ -14,11 +14,11 @@ public class NotEmptyInconsistency extends EntityAnnotationDetector {
     @Override
     protected String getBugType()
     {
-        return "NOT_EMPTY_INCONSISTENCY";
+        return "SIZE_INCONSISTENCY";
     }
 
     protected boolean isInvalid(FieldOrMethod member)
     {
-        return !Validator.validateNotEmpty(member);
+        return !Validator.validateSize(member);
     }
 }

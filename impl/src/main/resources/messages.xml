@@ -29,10 +29,10 @@
 
     <BugPattern type="NOT_EMPTY_INCONSISTENCY">
         <ShortDescription>@NotEmpty inconsistency</ShortDescription>
-        <LongDescription>@NotEmpty used for nullable column or not-null String/array column misses @NotEmpty annotation on {1}</LongDescription>
+        <LongDescription>@NotEmpty used for nullable column or not-null String/array/Collection/Map column misses @NotEmpty annotation on {1}</LongDescription>
         <Details>
             <![CDATA[
-<p>Nullable properties should not be annotated @NotEmpty, while not nullable String/array properties should.</p>
+<p>Nullable properties should not be annotated @NotEmpty, while not nullable String/array/Collection/Map properties should.</p>
 ]]>
         </Details>
     </BugPattern>

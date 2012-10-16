@@ -2,8 +2,9 @@ package pl.com.it_crowd.findbugs;
 
 import edu.umd.cs.findbugs.BugReporter;
 import org.apache.bcel.classfile.AnnotationEntry;
-import org.apache.bcel.classfile.ElementValuePair;
 import org.apache.bcel.classfile.FieldOrMethod;
+
+import static pl.com.it_crowd.findbugs.BcelHelper.isJavaxPersistenceColumn;
 
 public class NotNullInconsistency extends EntityAnnotationDetector {
 // --------------------------- CONSTRUCTORS ---------------------------
@@ -27,11 +28,9 @@ public class NotNullInconsistency extends EntityAnnotationDetector {
         for (AnnotationEntry entry : obj.getAnnotationEntries()) {
             if ("Ljavax/validation/constraints/NotNull;".equals(entry.getAnnotationType())) {
                 notNullAnnotationPresent = true;
-            } else if ("Ljavax/persistence/Column;".equals(entry.getAnnotationType())) {
+            } else if (isJavaxPersistenceColumn(entry)) {
                 columnAnnotationPresent = true;
-                for (ElementValuePair pair : entry.getElementValuePairs()) {
-                    notNullColumn |= "nullable".equals(pair.getNameString()) && "false".equalsIgnoreCase(pair.getValue().stringifyValue());
-                }
+                notNullColumn = "false".equals(BcelHelper.getAnnotationPropertyValue(entry, "nullable"));
             }
         }
 

@@ -2,11 +2,16 @@ package pl.com.it_crowd.findbugs;
 
 import edu.umd.cs.findbugs.BugReporter;
 import org.apache.bcel.classfile.AnnotationEntry;
-import org.apache.bcel.classfile.ElementValuePair;
 import org.apache.bcel.classfile.Field;
 import org.apache.bcel.classfile.FieldOrMethod;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.Type;
+
+import static pl.com.it_crowd.findbugs.BcelHelper.isArray;
+import static pl.com.it_crowd.findbugs.BcelHelper.isCollection;
+import static pl.com.it_crowd.findbugs.BcelHelper.isJavaxPersistenceColumn;
+import static pl.com.it_crowd.findbugs.BcelHelper.isMap;
+import static pl.com.it_crowd.findbugs.BcelHelper.isString;
 
 public class NotEmptyInconsistency extends EntityAnnotationDetector {
 // --------------------------- CONSTRUCTORS ---------------------------
@@ -28,6 +33,15 @@ public class NotEmptyInconsistency extends EntityAnnotationDetector {
         return "NOT_EMPTY_INCONSISTENCY";
     }
 
+    private Type getType(FieldOrMethod obj)
+    {
+        if (obj instanceof Field) {
+            return ((Field) obj).getType();
+        } else {
+            return ((Method) obj).getReturnType();
+        }
+    }
+
     protected boolean isInvalid(FieldOrMethod obj)
     {
         boolean columnAnnotationPresent = false;
@@ -36,20 +50,13 @@ public class NotEmptyInconsistency extends EntityAnnotationDetector {
         for (AnnotationEntry entry : obj.getAnnotationEntries()) {
             if ("Lorg/hibernate/validator/constraints/NotEmpty;".equals(entry.getAnnotationType())) {
                 notEmptyAnnotationPresent = true;
-            } else if ("Ljavax/persistence/Column;".equals(entry.getAnnotationType())) {
+            } else if (isJavaxPersistenceColumn(entry)) {
                 columnAnnotationPresent = true;
-                for (ElementValuePair pair : entry.getElementValuePairs()) {
-                    notNullColumn |= "nullable".equals(pair.getNameString()) && "false".equalsIgnoreCase(pair.getValue().stringifyValue());
-                }
+                notNullColumn = "false".equals(BcelHelper.getAnnotationPropertyValue(entry, "nullable"));
             }
         }
-        Type type;
-        if (obj instanceof Field) {
-            type = ((Field) obj).getType();
-        } else {
-            type = ((Method) obj).getReturnType();
-        }
-        boolean isString = "java.lang.String".equals(type.toString());
-        return columnAnnotationPresent && (notNullColumn && isString && !notEmptyAnnotationPresent || !notNullColumn && notEmptyAnnotationPresent);
+        Type type = getType(obj);
+        boolean notEmptyCandidate = isString(type) || isArray(type) || isCollection(type) || isMap(type);
+        return columnAnnotationPresent && (notNullColumn && notEmptyCandidate && !notEmptyAnnotationPresent || !notNullColumn && notEmptyAnnotationPresent);
     }
 }

@@ -1,19 +1,43 @@
 package pl.com.it_crowd.findbugs;
 
 import org.apache.bcel.classfile.Field;
+import org.apache.bcel.classfile.JavaClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_ENTITY;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_TABLE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_NOT_EMPTY;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_NOT_NULL;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_SIZE;
 import static pl.com.it_crowd.findbugs.BcelMockHelper.mockAnnotationEntry;
 import static pl.com.it_crowd.findbugs.BcelMockHelper.mockField;
+import static pl.com.it_crowd.findbugs.BcelMockHelper.mockJavaClass;
 
 public class ValidatorTest {
 // -------------------------- OTHER METHODS --------------------------
+
+    @Test
+    public void validateEntityVsTable()
+    {
+//        Given
+        final JavaClass classA = mockJavaClass("SomeEntity", mockAnnotationEntry(JAVAX_PERSISTENCE_ENTITY),
+            mockAnnotationEntry(JAVAX_PERSISTENCE_TABLE, "name=ENT"));
+        final JavaClass classB = mockJavaClass("SomeEntity", mockAnnotationEntry(JAVAX_PERSISTENCE_ENTITY), mockAnnotationEntry(JAVAX_PERSISTENCE_TABLE));
+        final JavaClass classC = mockJavaClass("SomeEntity", mockAnnotationEntry(JAVAX_PERSISTENCE_TABLE));
+
+//        When
+        final boolean resultA = Validator.validateEntityVsTable(classA);
+        final boolean resultB = Validator.validateEntityVsTable(classB);
+        final boolean resultC = Validator.validateEntityVsTable(classC);
+
+//        Then
+        assertTrue(resultA);
+        assertFalse(resultB);
+        assertTrue(resultC);
+    }
 
     @Test
     public void validateNotEmpty()

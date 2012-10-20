@@ -2,10 +2,14 @@ package pl.com.it_crowd.findbugs;
 
 import org.apache.bcel.classfile.AnnotationEntry;
 import org.apache.bcel.classfile.FieldOrMethod;
+import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.generic.Type;
+import org.apache.commons.lang.StringUtils;
 
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_LENGTH;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_DEFAULT_LENGTH;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_ENTITY;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_TABLE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_SIZE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_SIZE_ATTRIBUTE_MAX;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_SIZE_DEFAULT_MAX;
@@ -74,6 +78,21 @@ public final class Validator {
         } else {
             return !string;
         }
+    }
+
+    public static boolean validateEntityVsTable(JavaClass obj)
+    {
+        boolean entity = false;
+        for (AnnotationEntry entry : obj.getAnnotationEntries()) {
+            entity |= JAVAX_PERSISTENCE_ENTITY.equals(entry.getAnnotationType());
+            if (JAVAX_PERSISTENCE_TABLE.equals(entry.getAnnotationType())) {
+                if (StringUtils.isEmpty(BcelHelper.getAnnotationPropertyValue(entry, "name"))) {
+                    continue;
+                }
+                return true;
+            }
+        }
+        return !entity;
     }
 
 // --------------------------- CONSTRUCTORS ---------------------------

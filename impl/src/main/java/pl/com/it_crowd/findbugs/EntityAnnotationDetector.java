@@ -9,6 +9,8 @@ import org.apache.bcel.classfile.FieldOrMethod;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_ENTITY;
+
 public abstract class EntityAnnotationDetector extends BytecodeScanningDetector {
 // ------------------------------ FIELDS ------------------------------
 
@@ -29,7 +31,7 @@ public abstract class EntityAnnotationDetector extends BytecodeScanningDetector 
     public void visit(JavaClass obj)
     {
         for (AnnotationEntry entry : obj.getAnnotationEntries()) {
-            entity |= "Ljavax/persistence/Entity;".equals(entry.getAnnotationType());
+            entity |= JAVAX_PERSISTENCE_ENTITY.equals(entry.getAnnotationType());
         }
         super.visit(obj);
     }

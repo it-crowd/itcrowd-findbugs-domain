@@ -2,8 +2,10 @@ package pl.com.it_crowd.findbugs;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+@Table(name = "SizeTestingEntity")
 @Entity
 public class SizeTestingEntity {
 // ------------------------------ FIELDS ------------------------------

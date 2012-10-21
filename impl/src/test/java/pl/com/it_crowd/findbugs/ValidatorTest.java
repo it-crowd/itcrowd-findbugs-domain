@@ -11,6 +11,7 @@ import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_ATTR
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_ENTITY;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_ID;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_JOIN_COLUMN;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_MANY_TO_ONE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_MANY_TO_ONE_ATTRIBUTE_OPTIONAL;
@@ -135,6 +136,9 @@ public class ValidatorTest {
             mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, false)));
         final Field fieldL = mockField(ROW_INT_ARRAY, mockAnnotationEntry(JAVAX_VALIDATION_CONSTRAINTS_NOT_NULL), mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN),
             mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, false)));
+        final Field fieldM = mockField(ROW_INT,
+            mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, false)),
+            mockAnnotationEntry(JAVAX_PERSISTENCE_ID));
 
 
 //        When
@@ -150,6 +154,7 @@ public class ValidatorTest {
         final boolean resultJ = Validator.validateNotNull(fieldJ);
         final boolean resultK = Validator.validateNotNull(fieldK);
         final boolean resultL = Validator.validateNotNull(fieldL);
+        final boolean resultM = Validator.validateNotNull(fieldM);
 
 //        Then
         assertTrue(resultA);
@@ -164,6 +169,7 @@ public class ValidatorTest {
         assertTrue(resultJ);
         assertTrue(resultK);
         assertTrue(resultL);
+        assertTrue(resultM);
     }
 
     @Test

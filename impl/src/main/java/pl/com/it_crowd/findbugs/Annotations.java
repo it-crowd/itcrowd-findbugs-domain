@@ -11,6 +11,7 @@ public interface Annotations {
     static final boolean JAVAX_PERSISTENCE_COLUMN_DEFAULT_NULLABLE = true;
     static final String JAVAX_PERSISTENCE_ENTITY = "Ljavax/persistence/Entity;";
     static final String JAVAX_PERSISTENCE_GENERATED_VALUE = "Ljavax/persistence/GeneratedValue";
+    static final String JAVAX_PERSISTENCE_ID = "Ljavax/persistence/Id;";
     static final String JAVAX_PERSISTENCE_JOIN_COLUMN = "Ljavax/persistence/JoinColumn;";
     static final String JAVAX_PERSISTENCE_MANY_TO_ONE = "Ljavax/persistence/ManyToOne;";
     static final String JAVAX_PERSISTENCE_MANY_TO_ONE_ATTRIBUTE_OPTIONAL = "optional";

@@ -11,6 +11,7 @@ import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_ATTR
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_DEFAULT_LENGTH;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_DEFAULT_NULLABLE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_ENTITY;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_ID;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_JOIN_COLUMN;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_MANY_TO_ONE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_MANY_TO_ONE_ATTRIBUTE_OPTIONAL;
@@ -67,10 +68,13 @@ public final class Validator {
     public static boolean validateNotNull(FieldOrMethod member)
     {
         boolean columnAnnotationPresent = false;
+        boolean idAnnotationPresent = false;
         boolean notNullAnnotationPresent = false;
         boolean notNullColumn = false;
         for (AnnotationEntry entry : member.getAnnotationEntries()) {
-            if (JAVAX_VALIDATION_CONSTRAINTS_NOT_NULL.equals(entry.getAnnotationType())) {
+            if (JAVAX_PERSISTENCE_ID.equals(entry.getAnnotationType())) {
+                idAnnotationPresent = true;
+            } else if (JAVAX_VALIDATION_CONSTRAINTS_NOT_NULL.equals(entry.getAnnotationType())) {
                 notNullAnnotationPresent = true;
             } else if (isJavaxPersistenceColumnOrJoinColumn(entry)) {
                 columnAnnotationPresent = true;
@@ -78,7 +82,7 @@ public final class Validator {
                     BcelHelper.getAnnotationPropertyValue(entry, JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, JAVAX_PERSISTENCE_COLUMN_DEFAULT_NULLABLE));
             }
         }
-        return !columnAnnotationPresent || !(notNullColumn && !notNullAnnotationPresent || !notNullColumn && notNullAnnotationPresent);
+        return idAnnotationPresent || !columnAnnotationPresent || !(notNullColumn && !notNullAnnotationPresent || !notNullColumn && notNullAnnotationPresent);
     }
 
     public static boolean validateSize(FieldOrMethod member)

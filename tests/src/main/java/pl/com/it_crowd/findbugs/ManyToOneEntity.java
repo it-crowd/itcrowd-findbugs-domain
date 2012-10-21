@@ -27,6 +27,7 @@ public class ManyToOneEntity {
     @JoinColumn()
     private Group validGroups;
 
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Group validGroupsB;

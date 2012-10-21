@@ -17,7 +17,7 @@ public interface Annotations {
     static final boolean JAVAX_PERSISTENCE_MANY_TO_ONE_DEFAULT_OPTIONAL = true;
     static final String JAVAX_PERSISTENCE_TABLE = "Ljavax/persistence/Table;";
     static final String JAVAX_VALIDATION_CONSTRAINTS_NOT_EMPTY = "Lorg/hibernate/validator/constraints/NotEmpty;";
-    static final String JAVAX_VALIDATION_CONSTRAINTS_NOT_NULL = "Lorg/hibernate/validator/constraints/NotNull;";
+    static final String JAVAX_VALIDATION_CONSTRAINTS_NOT_NULL = "Ljavax/validation/constraints/NotNull;";
     static final String JAVAX_VALIDATION_CONSTRAINTS_SIZE = "Ljavax/validation/constraints/Size;";
     static final String JAVAX_VALIDATION_CONSTRAINTS_SIZE_ATTRIBUTE_MAX = "max";
     static final int JAVAX_VALIDATION_CONSTRAINTS_SIZE_DEFAULT_MAX = 2147483647;

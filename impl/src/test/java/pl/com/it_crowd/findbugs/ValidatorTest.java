@@ -133,6 +133,8 @@ public class ValidatorTest {
         final Field fieldJ = mockField(JAVA_LANG_STRING, mockAnnotationEntry(JAVAX_VALIDATION_CONSTRAINTS_NOT_NULL), mockAnnotationEntry(ORG_JUNIT_TEST));
         final Field fieldK = mockField(JAVA_LANG_STRING, mockAnnotationEntry(JAVAX_VALIDATION_CONSTRAINTS_NOT_NULL),
             mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, false)));
+        final Field fieldL = mockField(ROW_INT_ARRAY, mockAnnotationEntry(JAVAX_VALIDATION_CONSTRAINTS_NOT_NULL), mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN),
+            mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, false)));
 
 
 //        When
@@ -147,6 +149,7 @@ public class ValidatorTest {
         final boolean resultI = Validator.validateNotNull(fieldI);
         final boolean resultJ = Validator.validateNotNull(fieldJ);
         final boolean resultK = Validator.validateNotNull(fieldK);
+        final boolean resultL = Validator.validateNotNull(fieldL);
 
 //        Then
         assertTrue(resultA);
@@ -160,6 +163,7 @@ public class ValidatorTest {
         assertTrue(resultI);
         assertTrue(resultJ);
         assertTrue(resultK);
+        assertTrue(resultL);
     }
 
     @Test

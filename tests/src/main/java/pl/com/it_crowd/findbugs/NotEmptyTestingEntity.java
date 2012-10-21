@@ -66,6 +66,7 @@ public class NotEmptyTestingEntity {
     @NotEmpty
     private int intAttributeB;
 
+    @NotNull
     @NotEmpty
     @Column(nullable = false)
     private int intAttributeC;

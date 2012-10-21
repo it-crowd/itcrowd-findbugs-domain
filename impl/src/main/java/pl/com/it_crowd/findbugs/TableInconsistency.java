@@ -5,16 +5,16 @@ import edu.umd.cs.findbugs.BugReporter;
 import edu.umd.cs.findbugs.BytecodeScanningDetector;
 import org.apache.bcel.classfile.JavaClass;
 
-public class EntityVsTableInconsistency extends BytecodeScanningDetector {
+public class TableInconsistency extends BytecodeScanningDetector {
 // ------------------------------ FIELDS ------------------------------
 
-    public static final String BUG_TYPE = "ENTITY_VS_TABLE_INCONSISTENCY";
+    public static final String BUG_TYPE = "TABLE_INCONSISTENCY";
 
     protected BugReporter bugReporter;
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-    public EntityVsTableInconsistency(BugReporter bugReporter)
+    public TableInconsistency(BugReporter bugReporter)
     {
         this.bugReporter = bugReporter;
     }
@@ -24,7 +24,7 @@ public class EntityVsTableInconsistency extends BytecodeScanningDetector {
     @Override
     public void visit(JavaClass obj)
     {
-        if (!Validator.validateEntityVsTable(obj)) {
+        if (!Validator.validateTable(obj)) {
             bugReporter.reportBug(new BugInstance(this, BUG_TYPE, HIGH_PRIORITY).addClass(this));
         }
     }

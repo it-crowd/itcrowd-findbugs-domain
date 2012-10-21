@@ -4,10 +4,10 @@
     <Detector class="pl.com.it_crowd.findbugs.NotNullInconsistency" reports="NOT_NULL_INCONSISTENCY"/>
     <Detector class="pl.com.it_crowd.findbugs.NotEmptyInconsistency" reports="NOT_EMPTY_INCONSISTENCY"/>
     <Detector class="pl.com.it_crowd.findbugs.SizeInconsistency" reports="SIZE_INCONSISTENCY"/>
-    <Detector class="pl.com.it_crowd.findbugs.EntityVsTableInconsistency" reports="ENTITY_VS_TABLE_INCONSISTENCY"/>
+    <Detector class="pl.com.it_crowd.findbugs.TableInconsistency" reports="TABLE_INCONSISTENCY"/>
     <BugPattern type="NOT_NULL_INCONSISTENCY" abbrev="NNI" category="CORRECTNESS"/>
     <BugPattern type="NOT_EMPTY_INCONSISTENCY" abbrev="NEI" category="CORRECTNESS"/>
     <BugPattern type="SIZE_INCONSISTENCY" abbrev="SI" category="CORRECTNESS"/>
-    <BugPattern type="ENTITY_VS_TABLE_INCONSISTENCY" abbrev="ETI" category="CORRECTNESS"/>
+    <BugPattern type="TABLE_INCONSISTENCY" abbrev="TI" category="CORRECTNESS"/>
 
 </FindbugsPlugin>

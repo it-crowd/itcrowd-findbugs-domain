@@ -21,7 +21,7 @@
             SizeInconsistency
         </Details>
     </Detector>
-    <Detector class="pl.com.it_crowd.findbugs.EntityVsTableInconsistency">
+    <Detector class="pl.com.it_crowd.findbugs.TableInconsistency">
         <Details>
             EntityVsTableInconsistency
         </Details>
@@ -66,7 +66,7 @@ null elements are considered valid.</li>
         </Details>
     </BugPattern>
 
-    <BugPattern type="ENTITY_VS_TABLE_INCONSISTENCY">
+    <BugPattern type="TABLE_INCONSISTENCY">
         <ShortDescription>@Table inconsistency</ShortDescription>
         <LongDescription>@Table with name is required for @Entity on {0}</LongDescription>
         <Details>
@@ -79,5 +79,5 @@ null elements are considered valid.</li>
     <BugCode abbrev="NNI">@NotNull Inconsistency</BugCode>
     <BugCode abbrev="NEI">@NotEmpty Inconsistency</BugCode>
     <BugCode abbrev="SI">@Size Inconsistency</BugCode>
-    <BugCode abbrev="ETI">@Entity vs @Table Inconsistency</BugCode>
+    <BugCode abbrev="TI">@Table Inconsistency</BugCode>
 </MessageCollection>

@@ -32,26 +32,6 @@ public class ValidatorTest {
 // -------------------------- OTHER METHODS --------------------------
 
     @Test
-    public void validateEntityVsTable()
-    {
-//        Given
-        final JavaClass classA = mockJavaClass("SomeEntity", mockAnnotationEntry(JAVAX_PERSISTENCE_ENTITY),
-            mockAnnotationEntry(JAVAX_PERSISTENCE_TABLE, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME, "ENT")));
-        final JavaClass classB = mockJavaClass("SomeEntity", mockAnnotationEntry(JAVAX_PERSISTENCE_ENTITY), mockAnnotationEntry(JAVAX_PERSISTENCE_TABLE));
-        final JavaClass classC = mockJavaClass("SomeEntity", mockAnnotationEntry(JAVAX_PERSISTENCE_TABLE));
-
-//        When
-        final boolean resultA = Validator.validateEntityVsTable(classA);
-        final boolean resultB = Validator.validateEntityVsTable(classB);
-        final boolean resultC = Validator.validateEntityVsTable(classC);
-
-//        Then
-        assertTrue(resultA);
-        assertFalse(resultB);
-        assertTrue(resultC);
-    }
-
-    @Test
     public void validateNotEmpty()
     {
 //        Given
@@ -199,5 +179,25 @@ public class ValidatorTest {
         assertFalse(resultI);
         assertTrue(resultJ);
         assertTrue(resultK);
+    }
+
+    @Test
+    public void validateTable()
+    {
+//        Given
+        final JavaClass classA = mockJavaClass("SomeEntity", mockAnnotationEntry(JAVAX_PERSISTENCE_ENTITY),
+            mockAnnotationEntry(JAVAX_PERSISTENCE_TABLE, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME, "ENT")));
+        final JavaClass classB = mockJavaClass("SomeEntity", mockAnnotationEntry(JAVAX_PERSISTENCE_ENTITY), mockAnnotationEntry(JAVAX_PERSISTENCE_TABLE));
+        final JavaClass classC = mockJavaClass("SomeEntity", mockAnnotationEntry(JAVAX_PERSISTENCE_TABLE));
+
+//        When
+        final boolean resultA = Validator.validateTable(classA);
+        final boolean resultB = Validator.validateTable(classB);
+        final boolean resultC = Validator.validateTable(classC);
+
+//        Then
+        assertTrue(resultA);
+        assertFalse(resultB);
+        assertTrue(resultC);
     }
 }

@@ -83,7 +83,7 @@ public final class Validator {
         }
     }
 
-    public static boolean validateEntityVsTable(JavaClass obj)
+    public static boolean validateTable(JavaClass obj)
     {
         boolean entity = false;
         for (AnnotationEntry entry : obj.getAnnotationEntries()) {
@@ -97,7 +97,6 @@ public final class Validator {
         }
         return !entity;
     }
-
 
 // --------------------------- CONSTRUCTORS ---------------------------
 

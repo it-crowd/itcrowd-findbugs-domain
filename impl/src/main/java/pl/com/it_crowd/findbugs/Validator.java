@@ -7,9 +7,12 @@ import org.apache.bcel.generic.Type;
 import org.apache.commons.lang.StringUtils;
 
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_LENGTH;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_DEFAULT_LENGTH;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_ENTITY;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_TABLE;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_NOT_EMPTY;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_NOT_NULL;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_SIZE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_SIZE_ATTRIBUTE_MAX;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_SIZE_DEFAULT_MAX;
@@ -27,7 +30,7 @@ public final class Validator {
     {
         boolean notEmptyAnnotationPresent = false;
         for (AnnotationEntry entry : member.getAnnotationEntries()) {
-            if (Annotations.JAVAX_VALIDATION_CONSTRAINTS_NOT_EMPTY.equals(entry.getAnnotationType())) {
+            if (JAVAX_VALIDATION_CONSTRAINTS_NOT_EMPTY.equals(entry.getAnnotationType())) {
                 notEmptyAnnotationPresent = true;
             }
         }
@@ -42,11 +45,11 @@ public final class Validator {
         boolean notNullAnnotationPresent = false;
         boolean notNullColumn = false;
         for (AnnotationEntry entry : member.getAnnotationEntries()) {
-            if (Annotations.JAVAX_VALIDATION_CONSTRAINTS_NOT_NULL.equals(entry.getAnnotationType())) {
+            if (JAVAX_VALIDATION_CONSTRAINTS_NOT_NULL.equals(entry.getAnnotationType())) {
                 notNullAnnotationPresent = true;
             } else if (isJavaxPersistenceColumnOrJoinColumn(entry)) {
                 columnAnnotationPresent = true;
-                notNullColumn = "false".equals(BcelHelper.getAnnotationPropertyValue(entry, "nullable"));
+                notNullColumn = !Boolean.parseBoolean(BcelHelper.getAnnotationPropertyValue(entry, JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, true));
             }
         }
         return !columnAnnotationPresent || !(notNullColumn && !notNullAnnotationPresent || !notNullColumn && notNullAnnotationPresent);
@@ -94,6 +97,7 @@ public final class Validator {
         }
         return !entity;
     }
+
 
 // --------------------------- CONSTRUCTORS ---------------------------
 

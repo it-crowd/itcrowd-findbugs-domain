@@ -5,9 +5,11 @@ public interface Annotations {
     // ------------------------------ FIELDS ------------------------------
     static final String JAVAX_PERSISTENCE_COLUMN = "Ljavax/persistence/Column;";
     static final String JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_LENGTH = "length";
+    static final String JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME = "name";
     static final String JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE = "nullable";
     static final int JAVAX_PERSISTENCE_COLUMN_DEFAULT_LENGTH = 255;
     static final String JAVAX_PERSISTENCE_ENTITY = "Ljavax/persistence/Entity;";
+    static final String JAVAX_PERSISTENCE_GENERATED_VALUE = "Ljavax/persistence/GeneratedValue";
     static final String JAVAX_PERSISTENCE_JOIN_COLUMN = "Ljavax/persistence/JoinColumn;";
     static final String JAVAX_PERSISTENCE_TABLE = "Ljavax/persistence/Table;";
     static final String JAVAX_VALIDATION_CONSTRAINTS_NOT_EMPTY = "Lorg/hibernate/validator/constraints/NotEmpty;";

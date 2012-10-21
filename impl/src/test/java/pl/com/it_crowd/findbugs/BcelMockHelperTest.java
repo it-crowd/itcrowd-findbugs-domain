@@ -12,6 +12,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE;
+import static pl.com.it_crowd.findbugs.BcelHelper.makeAnnotationProperty;
+import static pl.com.it_crowd.findbugs.TypeStrings.JAVA_LANG_STRING;
+import static pl.com.it_crowd.findbugs.TypeStrings.JAVA_UTIL_COLLECTION;
+import static pl.com.it_crowd.findbugs.TypeStrings.ORG_JUNIT_TEST;
 
 public final class BcelMockHelperTest {
 // -------------------------- OTHER METHODS --------------------------
@@ -20,9 +27,14 @@ public final class BcelMockHelperTest {
     public void mockAnnotationEntry()
     {
         //        Given
-        final AnnotationEntry entryA = BcelMockHelper.mockAnnotationEntry(Annotations.JAVAX_PERSISTENCE_COLUMN, true, "nullable=true");
-        final AnnotationEntry entryB = BcelMockHelper.mockAnnotationEntry(Annotations.JAVAX_PERSISTENCE_COLUMN, false, "name=EMAIL", "nullable=true");
-        final AnnotationEntry entryC = BcelMockHelper.mockAnnotationEntry(Annotations.JAVAX_PERSISTENCE_COLUMN, "name=EMAIL", "nullable=true");
+        final AnnotationEntry entryA = BcelMockHelper.mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN, true,
+            makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, true));
+        final AnnotationEntry entryB = BcelMockHelper.mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN, false,
+            makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME, "EMAIL"),
+            makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, true));
+        final AnnotationEntry entryC = BcelMockHelper.mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN,
+            makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME, "EMAIL"),
+            makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, true));
 
         //        When
         final ElementValuePair[] elementValuePairsA = entryA.getElementValuePairs();
@@ -36,7 +48,7 @@ public final class BcelMockHelperTest {
         assertNotNull(elementValuePairsA);
         assertEquals(1, elementValuePairsA.length);
         assertNotNull(elementValuePairsA[0]);
-        assertEquals("nullable", elementValuePairsA[0].getNameString());
+        assertEquals(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, elementValuePairsA[0].getNameString());
         assertNotNull(elementValuePairsA[0].getValue());
         assertEquals("true", elementValuePairsA[0].getValue().stringifyValue());
         //--
@@ -44,11 +56,11 @@ public final class BcelMockHelperTest {
         assertNotNull(elementValuePairsB);
         assertEquals(2, elementValuePairsB.length);
         assertNotNull(elementValuePairsB[0]);
-        assertEquals("name", elementValuePairsB[0].getNameString());
+        assertEquals(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME, elementValuePairsB[0].getNameString());
         assertNotNull(elementValuePairsB[0].getValue());
         assertEquals("EMAIL", elementValuePairsB[0].getValue().stringifyValue());
         assertNotNull(elementValuePairsB[1]);
-        assertEquals("nullable", elementValuePairsB[1].getNameString());
+        assertEquals(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, elementValuePairsB[1].getNameString());
         assertNotNull(elementValuePairsB[1].getValue());
         assertEquals("true", elementValuePairsB[1].getValue().stringifyValue());
         //--
@@ -59,12 +71,11 @@ public final class BcelMockHelperTest {
     public void mockField()
     {
 //        Given
-        final Field fieldA = BcelMockHelper.mockField("Ljava/lang/String;");
-        final String expectedAnnotaionType = "Lorg/junit/Test;";
-        final String expectedAnnotaionType2 = Annotations.JAVAX_PERSISTENCE_COLUMN;
-        final Field fieldB = BcelMockHelper.mockField("Ljava/util/Collection;",
-            BcelMockHelper.mockAnnotationEntry(expectedAnnotaionType, "timeout=23", "wtf=ftw"),
-            BcelMockHelper.mockAnnotationEntry(expectedAnnotaionType2, "name=ID"));
+        final Field fieldA = BcelMockHelper.mockField(JAVA_LANG_STRING);
+        final String expectedAnnotaionType = ORG_JUNIT_TEST;
+        final String expectedAnnotaionType2 = JAVAX_PERSISTENCE_COLUMN;
+        final Field fieldB = BcelMockHelper.mockField(JAVA_UTIL_COLLECTION, BcelMockHelper.mockAnnotationEntry(expectedAnnotaionType, "timeout=23", "wtf=ftw"),
+            BcelMockHelper.mockAnnotationEntry(expectedAnnotaionType2, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME, "ID")));
 
 //        When
         final AnnotationEntry[] annotationEntriesA = fieldA.getAnnotationEntries();

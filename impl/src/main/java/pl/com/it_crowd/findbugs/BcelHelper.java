@@ -12,6 +12,9 @@ import org.apache.bcel.generic.Type;
 import java.util.Collection;
 import java.util.Map;
 
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_JOIN_COLUMN;
+
 public final class BcelHelper {
 // ------------------------------ FIELDS ------------------------------
 
@@ -70,7 +73,7 @@ public final class BcelHelper {
 
     public static boolean isJavaxPersistenceColumn(AnnotationEntry entry)
     {
-        return entry != null && Annotations.JAVAX_PERSISTENCE_COLUMN.equals(entry.getAnnotationType());
+        return entry != null && JAVAX_PERSISTENCE_COLUMN.equals(entry.getAnnotationType());
     }
 
     public static boolean isJavaxPersistenceColumnOrJoinColumn(AnnotationEntry entry)
@@ -80,7 +83,7 @@ public final class BcelHelper {
 
     public static boolean isJavaxPersistenceJoinColumn(AnnotationEntry entry)
     {
-        return entry != null && Annotations.JAVAX_PERSISTENCE_JOIN_COLUMN.equals(entry.getAnnotationType());
+        return entry != null && JAVAX_PERSISTENCE_JOIN_COLUMN.equals(entry.getAnnotationType());
     }
 
     public static boolean isMap(Type type)
@@ -95,6 +98,11 @@ public final class BcelHelper {
     public static boolean isString(Type type)
     {
         return type instanceof ObjectType && String.class.getCanonicalName().equals(((ObjectType) type).getClassName());
+    }
+
+    public static String makeAnnotationProperty(String name, Object value)
+    {
+        return name + "=" + value.toString();
     }
 
 // --------------------------- CONSTRUCTORS ---------------------------

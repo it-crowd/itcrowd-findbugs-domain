@@ -89,7 +89,8 @@ public class NotNullTestingEntity {
 
     private String stringAttributeE;
 
-    // --------------------- GETTER / SETTER METHODS ---------------------
+// --------------------- GETTER / SETTER METHODS ---------------------
+
     @Size(max = 255)
     @NotNull
     @Column(nullable = true)

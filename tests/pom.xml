@@ -41,7 +41,7 @@
                             <version>1.0.0-SNAPSHOT</version>
                         </plugin>
                     </plugins>
-                    <visitors>NotNullInconsistency,NotEmptyInconsistency,SizeInconsistency,TableInconsistency</visitors>
+                    <visitors>NotNullInconsistency,NotEmptyInconsistency,SizeInconsistency,TableInconsistency,ManyToOneInconsistency</visitors>
                 </configuration>
             </plugin>
         </plugins>

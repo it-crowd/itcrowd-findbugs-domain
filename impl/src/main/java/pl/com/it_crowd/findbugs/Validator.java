@@ -9,7 +9,12 @@ import org.apache.commons.lang.StringUtils;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_LENGTH;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_DEFAULT_LENGTH;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_DEFAULT_NULLABLE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_ENTITY;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_JOIN_COLUMN;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_MANY_TO_ONE;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_MANY_TO_ONE_ATTRIBUTE_OPTIONAL;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_MANY_TO_ONE_DEFAULT_OPTIONAL;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_TABLE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_NOT_EMPTY;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_NOT_NULL;
@@ -25,6 +30,26 @@ import static pl.com.it_crowd.findbugs.BcelHelper.isString;
 
 public final class Validator {
 // -------------------------- STATIC METHODS --------------------------
+
+    public static boolean validateManyToOne(FieldOrMethod member)
+    {
+        boolean oneToManyAnnotationPresent = false;
+        boolean joinColumnAnnotationPresent = false;
+        boolean nullableColumn = false;
+        boolean optionalOneToMany = false;
+        for (AnnotationEntry entry : member.getAnnotationEntries()) {
+            if (JAVAX_PERSISTENCE_MANY_TO_ONE.equals(entry.getAnnotationType())) {
+                oneToManyAnnotationPresent = true;
+                optionalOneToMany = Boolean.parseBoolean(BcelHelper.getAnnotationPropertyValue(entry, JAVAX_PERSISTENCE_MANY_TO_ONE_ATTRIBUTE_OPTIONAL,
+                    JAVAX_PERSISTENCE_MANY_TO_ONE_DEFAULT_OPTIONAL));
+            } else if (JAVAX_PERSISTENCE_JOIN_COLUMN.equals(entry.getAnnotationType())) {
+                joinColumnAnnotationPresent = true;
+                nullableColumn = Boolean.parseBoolean(
+                    BcelHelper.getAnnotationPropertyValue(entry, JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, JAVAX_PERSISTENCE_COLUMN_DEFAULT_NULLABLE));
+            }
+        }
+        return (joinColumnAnnotationPresent || !oneToManyAnnotationPresent) && (!oneToManyAnnotationPresent || nullableColumn == optionalOneToMany);
+    }
 
     public static boolean validateNotEmpty(FieldOrMethod member)
     {
@@ -49,7 +74,8 @@ public final class Validator {
                 notNullAnnotationPresent = true;
             } else if (isJavaxPersistenceColumnOrJoinColumn(entry)) {
                 columnAnnotationPresent = true;
-                notNullColumn = !Boolean.parseBoolean(BcelHelper.getAnnotationPropertyValue(entry, JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, true));
+                notNullColumn = !Boolean.parseBoolean(
+                    BcelHelper.getAnnotationPropertyValue(entry, JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, JAVAX_PERSISTENCE_COLUMN_DEFAULT_NULLABLE));
             }
         }
         return !columnAnnotationPresent || !(notNullColumn && !notNullAnnotationPresent || !notNullColumn && notNullAnnotationPresent);

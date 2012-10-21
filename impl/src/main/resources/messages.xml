@@ -16,6 +16,11 @@
             NotEmptyInconsistency
         </Details>
     </Detector>
+    <Detector class="pl.com.it_crowd.findbugs.ManyToOneInconsistency">
+        <Details>
+            ManyToOneInconsistency
+        </Details>
+    </Detector>
     <Detector class="pl.com.it_crowd.findbugs.SizeInconsistency">
         <Details>
             SizeInconsistency
@@ -43,6 +48,16 @@
         <Details>
             <![CDATA[
 <p>@NotEmpty supports only only String/array/Collection/Map.</p>
+]]>
+        </Details>
+    </BugPattern>
+
+    <BugPattern type="MANY_TO_ONE_INCONSISTENCY">
+        <ShortDescription>@ManyToOne inconsistency</ShortDescription>
+        <LongDescription>@ManyToOne requires @JoinColumn and optional must be equal to nullable on {1}</LongDescription>
+        <Details>
+            <![CDATA[
+<p>@ManyToOne requires @JoinColumn. @ManyToOne.optional must be in synch with @JoinColumn.nullable.</p>
 ]]>
         </Details>
     </BugPattern>
@@ -78,6 +93,7 @@ null elements are considered valid.</li>
 
     <BugCode abbrev="NNI">@NotNull Inconsistency</BugCode>
     <BugCode abbrev="NEI">@NotEmpty Inconsistency</BugCode>
+    <BugCode abbrev="MTOI">@ManyToOne Inconsistency</BugCode>
     <BugCode abbrev="SI">@Size Inconsistency</BugCode>
     <BugCode abbrev="TI">@Table Inconsistency</BugCode>
 </MessageCollection>

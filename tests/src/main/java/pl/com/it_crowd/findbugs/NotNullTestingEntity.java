@@ -4,6 +4,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -59,6 +62,29 @@ public class NotNullTestingEntity {
     @NotEmpty
     @Column(nullable = false)
     private List collectionAttributeE;
+
+    @NotNull
+    @ManyToOne
+    @JoinTable(name = "BLA", joinColumns = @JoinColumn(name = "ManyToOneEntity"), inverseJoinColumns = @JoinColumn(name = "joinTableA"))
+    private Group joinTableA;
+
+    @ManyToOne(optional = true)
+    @JoinTable(name = "BLA", joinColumns = @JoinColumn(name = "ManyToOneEntity"), inverseJoinColumns = @JoinColumn(name = "joinTableB"))
+    private Group joinTableB;
+
+    @ManyToOne(optional = false)
+    @JoinTable(name = "BLA", joinColumns = @JoinColumn(name = "ManyToOneEntity"), inverseJoinColumns = @JoinColumn(name = "joinTableC"))
+    private Group joinTableC;
+
+    @NotNull
+    @ManyToOne(optional = false)
+    @JoinTable(name = "BLA", joinColumns = @JoinColumn(name = "ManyToOneEntity"), inverseJoinColumns = @JoinColumn(name = "joinTableD"))
+    private Group joinTableD;
+
+    @NotNull
+    @ManyToOne(optional = true)
+    @JoinTable(name = "BLA", joinColumns = @JoinColumn(name = "ManyToOneEntity"), inverseJoinColumns = @JoinColumn(name = "joinTableE"))
+    private Group joinTableE;
 
     @NotNull
     @Column(nullable = true)

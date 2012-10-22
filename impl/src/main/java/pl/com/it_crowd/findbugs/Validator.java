@@ -97,20 +97,24 @@ public final class Validator {
     {
         boolean oneToManyAnnotationPresent = false;
         boolean joinColumnAnnotationPresent = false;
+        boolean joinTableAnnotationPresent = false;
         boolean nullableColumn = false;
-        boolean optionalOneToMany = false;
+        boolean optionalManyToOne = false;
         for (AnnotationEntry entry : member.getAnnotationEntries()) {
             if (JAVAX_PERSISTENCE_MANY_TO_ONE.equals(entry.getAnnotationType())) {
                 oneToManyAnnotationPresent = true;
-                optionalOneToMany = Boolean.parseBoolean(BcelHelper.getAnnotationPropertyValue(entry, JAVAX_PERSISTENCE_MANY_TO_ONE_ATTRIBUTE_OPTIONAL,
+                optionalManyToOne = Boolean.parseBoolean(BcelHelper.getAnnotationPropertyValue(entry, JAVAX_PERSISTENCE_MANY_TO_ONE_ATTRIBUTE_OPTIONAL,
                     JAVAX_PERSISTENCE_MANY_TO_ONE_DEFAULT_OPTIONAL));
             } else if (JAVAX_PERSISTENCE_JOIN_COLUMN.equals(entry.getAnnotationType())) {
                 joinColumnAnnotationPresent = true;
                 nullableColumn = Boolean.parseBoolean(
                     BcelHelper.getAnnotationPropertyValue(entry, JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, JAVAX_PERSISTENCE_COLUMN_DEFAULT_NULLABLE));
+            } else if (JAVAX_PERSISTENCE_JOIN_TABLE.equals(entry.getAnnotationType())) {
+                joinTableAnnotationPresent = true;
             }
         }
-        return (joinColumnAnnotationPresent || !oneToManyAnnotationPresent) && (!oneToManyAnnotationPresent || nullableColumn == optionalOneToMany);
+        return joinTableAnnotationPresent || (joinColumnAnnotationPresent || !oneToManyAnnotationPresent) && (!oneToManyAnnotationPresent
+            || nullableColumn == optionalManyToOne);
     }
 
     public static boolean validateNotEmpty(FieldOrMethod member)
@@ -128,10 +132,12 @@ public final class Validator {
 
     public static boolean validateNotNull(FieldOrMethod member)
     {
+        boolean joinTableAnnotationPresent = false;
         boolean columnAnnotationPresent = false;
         boolean idAnnotationPresent = false;
         boolean notNullAnnotationPresent = false;
         boolean notNullColumn = false;
+        boolean optionalManyToOne = true;
         for (AnnotationEntry entry : member.getAnnotationEntries()) {
             if (JAVAX_PERSISTENCE_ID.equals(entry.getAnnotationType())) {
                 idAnnotationPresent = true;
@@ -141,9 +147,16 @@ public final class Validator {
                 columnAnnotationPresent = true;
                 notNullColumn = !Boolean.parseBoolean(
                     BcelHelper.getAnnotationPropertyValue(entry, JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, JAVAX_PERSISTENCE_COLUMN_DEFAULT_NULLABLE));
+            } else if (JAVAX_PERSISTENCE_JOIN_TABLE.equals(entry.getAnnotationType())) {
+                joinTableAnnotationPresent = true;
+            } else if (JAVAX_PERSISTENCE_MANY_TO_ONE.equals(entry.getAnnotationType())) {
+                optionalManyToOne = Boolean.parseBoolean(BcelHelper.getAnnotationPropertyValue(entry, JAVAX_PERSISTENCE_MANY_TO_ONE_ATTRIBUTE_OPTIONAL,
+                    JAVAX_PERSISTENCE_MANY_TO_ONE_DEFAULT_OPTIONAL));
             }
         }
-        return idAnnotationPresent || !columnAnnotationPresent || !(notNullColumn && !notNullAnnotationPresent || !notNullColumn && notNullAnnotationPresent);
+        boolean notNullRequired = columnAnnotationPresent && notNullColumn || joinTableAnnotationPresent && !optionalManyToOne;
+        return idAnnotationPresent || !(columnAnnotationPresent || joinTableAnnotationPresent) || !(notNullRequired && !notNullAnnotationPresent
+            || !notNullRequired && notNullAnnotationPresent);
     }
 
     public static boolean validateSize(FieldOrMethod member)

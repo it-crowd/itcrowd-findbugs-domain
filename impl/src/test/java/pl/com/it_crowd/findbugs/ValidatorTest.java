@@ -112,6 +112,12 @@ public class ValidatorTest {
             mockAnnotationEntry(JAVAX_PERSISTENCE_JOIN_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, false)),
             mockAnnotationEntry(JAVAX_PERSISTENCE_MANY_TO_ONE, makeAnnotationProperty(JAVAX_PERSISTENCE_MANY_TO_ONE_ATTRIBUTE_OPTIONAL, true)));
         final Field fieldE = mockField(JAVA_UTIL_LIST, mockAnnotationEntry(JAVAX_PERSISTENCE_JOIN_COLUMN));
+        final Field fieldF = mockField(JAVA_UTIL_LIST, mockAnnotationEntry(JAVAX_PERSISTENCE_MANY_TO_ONE),
+            mockAnnotationEntry(JAVAX_PERSISTENCE_JOIN_TABLE, makeAnnotationProperty(JAVAX_PERSISTENCE_JOIN_TABLE_ATTRIBUTE_NAME, "JOJO"),
+                makeAnnotationProperty(JAVAX_PERSISTENCE_JOIN_TABLE_ATTRIBUTE_JOIN_COLUMNS,
+                    mockAnnotationEntry(JAVAX_PERSISTENCE_JOIN_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME, "A"))),
+                makeAnnotationProperty(JAVAX_PERSISTENCE_JOIN_TABLE_ATTRIBUTE_INVERSE_JOIN_COLUMNS,
+                    mockAnnotationEntry(JAVAX_PERSISTENCE_JOIN_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME, "B")))));
 
         //        When
         final boolean resultA = Validator.validateManyToOne(fieldA);
@@ -119,6 +125,7 @@ public class ValidatorTest {
         final boolean resultC = Validator.validateManyToOne(fieldC);
         final boolean resultD = Validator.validateManyToOne(fieldD);
         final boolean resultE = Validator.validateManyToOne(fieldE);
+        final boolean resultF = Validator.validateManyToOne(fieldF);
 
         //        Then
         assertTrue(resultA);
@@ -126,6 +133,7 @@ public class ValidatorTest {
         assertFalse(resultC);
         assertFalse(resultD);
         assertTrue(resultE);
+        assertTrue(resultF);
     }
 
     @Test
@@ -198,7 +206,16 @@ public class ValidatorTest {
         final Field fieldM = mockField(ROW_INT,
             mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, false)),
             mockAnnotationEntry(JAVAX_PERSISTENCE_ID));
-
+        final Field fieldN = mockField(JAVA_UTIL_LIST, mockAnnotationEntry(JAVAX_PERSISTENCE_JOIN_TABLE),
+            mockAnnotationEntry(JAVAX_PERSISTENCE_MANY_TO_ONE, makeAnnotationProperty(JAVAX_PERSISTENCE_MANY_TO_ONE_ATTRIBUTE_OPTIONAL, false)),
+            mockAnnotationEntry(JAVAX_VALIDATION_CONSTRAINTS_NOT_NULL));
+        final Field fieldO = mockField(JAVA_UTIL_LIST, mockAnnotationEntry(JAVAX_PERSISTENCE_JOIN_TABLE),
+            mockAnnotationEntry(JAVAX_PERSISTENCE_MANY_TO_ONE, makeAnnotationProperty(JAVAX_PERSISTENCE_MANY_TO_ONE_ATTRIBUTE_OPTIONAL, false)));
+        final Field fieldP = mockField(JAVA_UTIL_LIST, mockAnnotationEntry(JAVAX_PERSISTENCE_JOIN_TABLE),
+            mockAnnotationEntry(JAVAX_PERSISTENCE_MANY_TO_ONE, makeAnnotationProperty(JAVAX_PERSISTENCE_MANY_TO_ONE_ATTRIBUTE_OPTIONAL, true)));
+        final Field fieldR = mockField(JAVA_UTIL_LIST,
+            mockAnnotationEntry(JAVAX_PERSISTENCE_JOIN_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, true)),
+            mockAnnotationEntry(JAVAX_PERSISTENCE_MANY_TO_ONE, makeAnnotationProperty(JAVAX_PERSISTENCE_MANY_TO_ONE_ATTRIBUTE_OPTIONAL, false)));
 
 //        When
         final boolean resultA = Validator.validateNotNull(fieldA);
@@ -214,6 +231,10 @@ public class ValidatorTest {
         final boolean resultK = Validator.validateNotNull(fieldK);
         final boolean resultL = Validator.validateNotNull(fieldL);
         final boolean resultM = Validator.validateNotNull(fieldM);
+        final boolean resultN = Validator.validateNotNull(fieldN);
+        final boolean resultO = Validator.validateNotNull(fieldO);
+        final boolean resultP = Validator.validateNotNull(fieldP);
+        final boolean resultR = Validator.validateNotNull(fieldR);
 
 //        Then
         assertTrue(resultA);
@@ -229,6 +250,10 @@ public class ValidatorTest {
         assertTrue(resultK);
         assertTrue(resultL);
         assertTrue(resultM);
+        assertTrue(resultN);
+        assertFalse(resultO);
+        assertTrue(resultP);
+        assertTrue(resultR);
     }
 
     @Test

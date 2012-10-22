@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+@SuppressWarnings("UnusedDeclaration")
 @Table(name = "SizeTestingEntity")
 @Entity
 public class SizeTestingEntity {

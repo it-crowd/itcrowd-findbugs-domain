@@ -25,7 +25,7 @@ import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_ATTR
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_GENERATED_VALUE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_JOIN_COLUMN;
-import static pl.com.it_crowd.findbugs.BcelHelper.makeAnnotationProperty;
+import static pl.com.it_crowd.findbugs.BcelMockHelper.makeAnnotationProperty;
 import static pl.com.it_crowd.findbugs.BcelMockHelper.mockAnnotationEntry;
 import static pl.com.it_crowd.findbugs.BcelMockHelper.mockConstantPool;
 import static pl.com.it_crowd.findbugs.TypeStrings.JAVA_LANG_STRING;

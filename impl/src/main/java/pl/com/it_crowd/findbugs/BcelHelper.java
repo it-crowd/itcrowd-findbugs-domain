@@ -1,6 +1,9 @@
 package pl.com.it_crowd.findbugs;
 
+import org.apache.bcel.classfile.AnnotationElementValue;
 import org.apache.bcel.classfile.AnnotationEntry;
+import org.apache.bcel.classfile.ArrayElementValue;
+import org.apache.bcel.classfile.ElementValue;
 import org.apache.bcel.classfile.ElementValuePair;
 import org.apache.bcel.classfile.Field;
 import org.apache.bcel.classfile.FieldOrMethod;
@@ -29,6 +32,31 @@ public final class BcelHelper {
         MAP_TYPE = (ObjectType) Type.getType(Map.class);
     }
 
+    public static String extractAttributeStringValue(ElementValue value, String attributeName)
+    {
+        if (value instanceof AnnotationElementValue) {
+            return extractAttributeStringValue((AnnotationElementValue) value, attributeName);
+        } else if (value instanceof ArrayElementValue) {
+            if (((ArrayElementValue) value).getElementValuesArraySize() == 1) {
+                final ElementValue elementValue = ((ArrayElementValue) value).getElementValuesArray()[0];
+                if (elementValue instanceof AnnotationElementValue) {
+                    return extractAttributeStringValue((AnnotationElementValue) elementValue, attributeName);
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        } else {
+            return value == null ? null : value.stringifyValue();
+        }
+    }
+
+    public static String extractAttributeStringValue(AnnotationElementValue value, String attributeName)
+    {
+        return getAnnotationPropertyValue(value.getAnnotationEntry(), attributeName);
+    }
+
     public static String getAnnotationPropertyValue(AnnotationEntry entry, String propertyName)
     {
         if (propertyName == null) {
@@ -46,6 +74,19 @@ public final class BcelHelper {
     {
         final String value = getAnnotationPropertyValue(entry, propertyName);
         return value == null ? (defaultValue == null ? null : defaultValue.toString()) : value;
+    }
+
+    public static ElementValue getAnnotationPropertyValue2(AnnotationEntry entry, String propertyName)
+    {
+        if (propertyName == null) {
+            return null;
+        }
+        for (ElementValuePair pair : entry.getElementValuePairs()) {
+            if (propertyName.equals(pair.getNameString())) {
+                return pair.getValue();
+            }
+        }
+        return null;
     }
 
     public static Type getType(FieldOrMethod obj)
@@ -95,14 +136,14 @@ public final class BcelHelper {
         }
     }
 
+    public static boolean isSingleValue(ElementValue value)
+    {
+        return !(value instanceof ArrayElementValue) || (((ArrayElementValue) value).getElementValuesArraySize() != 1);
+    }
+
     public static boolean isString(Type type)
     {
         return type instanceof ObjectType && String.class.getCanonicalName().equals(((ObjectType) type).getClassName());
-    }
-
-    public static String makeAnnotationProperty(String name, Object value)
-    {
-        return name + "=" + value.toString();
     }
 
 // --------------------------- CONSTRUCTORS ---------------------------

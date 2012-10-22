@@ -1,11 +1,13 @@
 <FindbugsPlugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="findbugsplugin.xsd"
                 pluginid="pl.com.it_crowd.findbugs.NotNullInconsistency" provider="IT Crowd" website="http://itcrowd.pl/itcrowd-findbugs">
 
+    <Detector class="pl.com.it_crowd.findbugs.ForeignKeyInconsistency" reports="FOREIGN_KEY_INCONSISTENCY"/>
     <Detector class="pl.com.it_crowd.findbugs.NotNullInconsistency" reports="NOT_NULL_INCONSISTENCY"/>
     <Detector class="pl.com.it_crowd.findbugs.NotEmptyInconsistency" reports="NOT_EMPTY_INCONSISTENCY"/>
     <Detector class="pl.com.it_crowd.findbugs.ManyToOneInconsistency" reports="MANY_TO_ONE_INCONSISTENCY"/>
     <Detector class="pl.com.it_crowd.findbugs.SizeInconsistency" reports="SIZE_INCONSISTENCY"/>
     <Detector class="pl.com.it_crowd.findbugs.TableInconsistency" reports="TABLE_INCONSISTENCY"/>
+    <BugPattern type="FOREIGN_KEY_INCONSISTENCY" abbrev="FKI" category="CORRECTNESS"/>
     <BugPattern type="NOT_NULL_INCONSISTENCY" abbrev="NNI" category="CORRECTNESS"/>
     <BugPattern type="NOT_EMPTY_INCONSISTENCY" abbrev="NEI" category="CORRECTNESS"/>
     <BugPattern type="MANY_TO_ONE_INCONSISTENCY" abbrev="MTOI" category="CORRECTNESS"/>

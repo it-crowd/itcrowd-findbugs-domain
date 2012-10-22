@@ -6,6 +6,11 @@
         <Details>IT Crowd domain annotation checks</Details>
     </Plugin>
 
+    <Detector class="pl.com.it_crowd.findbugs.ForeignKeyInconsistency">
+        <Details>
+            ForeignKeyInconsistency
+        </Details>
+    </Detector>
     <Detector class="pl.com.it_crowd.findbugs.NotNullInconsistency">
         <Details>
             NotNullInconsistency
@@ -31,6 +36,16 @@
             EntityVsTableInconsistency
         </Details>
     </Detector>
+
+    <BugPattern type="FOREIGN_KEY_INCONSISTENCY">
+        <ShortDescription>@ForeignKey inconsistency</ShortDescription>
+        <LongDescription>@ForeignKey missing or invalid name on {1}</LongDescription>
+        <Details>
+            <![CDATA[
+<p>@JoinTable or @JoinColumn should be annotated @ForeignKey.</p>
+]]>
+        </Details>
+    </BugPattern>
 
     <BugPattern type="NOT_NULL_INCONSISTENCY">
         <ShortDescription>@NotNull inconsistency</ShortDescription>
@@ -91,6 +106,7 @@ null elements are considered valid.</li>
         </Details>
     </BugPattern>
 
+    <BugCode abbrev="FKI">@ForeignKey Inconsistency</BugCode>
     <BugCode abbrev="NNI">@NotNull Inconsistency</BugCode>
     <BugCode abbrev="NEI">@NotEmpty Inconsistency</BugCode>
     <BugCode abbrev="MTOI">@ManyToOne Inconsistency</BugCode>

@@ -13,6 +13,10 @@ import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_ATTR
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_ENTITY;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_ID;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_JOIN_COLUMN;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_JOIN_TABLE;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_JOIN_TABLE_ATTRIBUTE_INVERSE_JOIN_COLUMNS;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_JOIN_TABLE_ATTRIBUTE_JOIN_COLUMNS;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_JOIN_TABLE_ATTRIBUTE_NAME;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_MANY_TO_ONE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_MANY_TO_ONE_ATTRIBUTE_OPTIONAL;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_TABLE;
@@ -20,7 +24,10 @@ import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_NOT_NULL;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_SIZE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_SIZE_ATTRIBUTE_MAX;
-import static pl.com.it_crowd.findbugs.BcelHelper.makeAnnotationProperty;
+import static pl.com.it_crowd.findbugs.Annotations.ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY;
+import static pl.com.it_crowd.findbugs.Annotations.ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_INVERSE_NAME;
+import static pl.com.it_crowd.findbugs.Annotations.ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_NAME;
+import static pl.com.it_crowd.findbugs.BcelMockHelper.makeAnnotationProperty;
 import static pl.com.it_crowd.findbugs.BcelMockHelper.mockAnnotationEntry;
 import static pl.com.it_crowd.findbugs.BcelMockHelper.mockField;
 import static pl.com.it_crowd.findbugs.BcelMockHelper.mockJavaClass;
@@ -35,6 +42,58 @@ import static pl.com.it_crowd.findbugs.TypeStrings.ROW_INT_ARRAY;
 
 public class ValidatorTest {
 // -------------------------- OTHER METHODS --------------------------
+
+    @Test
+    public void validateForeignKey()
+    {
+//        Given
+        final Field fieldA = mockField(JAVA_UTIL_LIST,
+            mockAnnotationEntry(JAVAX_PERSISTENCE_JOIN_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME, "THE_GROUP")),
+            mockAnnotationEntry(ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY,
+                makeAnnotationProperty(ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_NAME, "FK___ForeignKeyEntity___THE_GROUP")));
+        final Field fieldB = mockField(JAVA_UTIL_LIST,
+            mockAnnotationEntry(JAVAX_PERSISTENCE_JOIN_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME, "GROUPS")),
+            mockAnnotationEntry(ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY));
+        final Field fieldC = mockField(JAVA_UTIL_LIST,
+            mockAnnotationEntry(JAVAX_PERSISTENCE_JOIN_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME, "GROUPS")));
+        final Field fieldD = mockField(JAVA_UTIL_LIST,
+            mockAnnotationEntry(JAVAX_PERSISTENCE_JOIN_TABLE, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME, "GROUPS")),
+            mockAnnotationEntry(ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY,
+                makeAnnotationProperty(ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_NAME, "FK___GROUPS"),
+                makeAnnotationProperty(ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_INVERSE_NAME, "FK___GROUPS")));
+        final Field fieldE = mockField(JAVA_UTIL_LIST,
+            mockAnnotationEntry(JAVAX_PERSISTENCE_JOIN_TABLE, makeAnnotationProperty(JAVAX_PERSISTENCE_JOIN_TABLE_ATTRIBUTE_NAME, "USER_GROUPS"),
+                makeAnnotationProperty(JAVAX_PERSISTENCE_JOIN_TABLE_ATTRIBUTE_JOIN_COLUMNS,
+                    mockAnnotationEntry(JAVAX_PERSISTENCE_JOIN_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME, "USERS"))),
+                makeAnnotationProperty(JAVAX_PERSISTENCE_JOIN_TABLE_ATTRIBUTE_INVERSE_JOIN_COLUMNS,
+                    mockAnnotationEntry(JAVAX_PERSISTENCE_JOIN_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME, "GROUPS")))),
+            mockAnnotationEntry(ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY,
+                makeAnnotationProperty(ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_NAME, "FK___USER_GROUPS___USERS"),
+                makeAnnotationProperty(ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_INVERSE_NAME, "FK___USER_GROUPS___GROUPS")));
+        final Field fieldF = mockField(JAVA_UTIL_LIST,
+            mockAnnotationEntry(JAVAX_PERSISTENCE_JOIN_TABLE, makeAnnotationProperty(JAVAX_PERSISTENCE_JOIN_TABLE_ATTRIBUTE_NAME, "USER_GROUPS"),
+                makeAnnotationProperty(JAVAX_PERSISTENCE_JOIN_TABLE_ATTRIBUTE_JOIN_COLUMNS,
+                    mockAnnotationEntry(JAVAX_PERSISTENCE_JOIN_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME, "GROUPS")))),
+            mockAnnotationEntry(ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY,
+                makeAnnotationProperty(ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_NAME, "FK___USER_GROUPS___"),
+                makeAnnotationProperty(ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_INVERSE_NAME, "FK___USER_GROUPS___GROUPS")));
+
+//        When
+        final boolean resultA = Validator.validateForeignKey(fieldA, "ForeignKeyEntity");
+        final boolean resultB = Validator.validateForeignKey(fieldB, "USERS");
+        final boolean resultC = Validator.validateForeignKey(fieldC, "USERS");
+        final boolean resultD = Validator.validateForeignKey(fieldD, "USERS");
+        final boolean resultE = Validator.validateForeignKey(fieldE, "USERS");
+        final boolean resultF = Validator.validateForeignKey(fieldF, "USERS");
+
+//        Then
+        assertTrue(resultA);
+        assertFalse(resultB);
+        assertFalse(resultC);
+        assertFalse(resultD);
+        assertTrue(resultE);
+        assertFalse(resultF);
+    }
 
     @Test
     public void validateManyToOne()
@@ -196,7 +255,7 @@ public class ValidatorTest {
         final Field fieldI = mockField(JAVA_LANG_STRING, mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN));
         final Field fieldJ = mockField(JAVA_LANG_STRING,
             mockAnnotationEntry(JAVAX_VALIDATION_CONSTRAINTS_SIZE, makeAnnotationProperty(JAVAX_VALIDATION_CONSTRAINTS_SIZE_ATTRIBUTE_MAX, 30)),
-            mockAnnotationEntry(ORG_JUNIT_TEST, "timeout=30"));
+            mockAnnotationEntry(ORG_JUNIT_TEST, makeAnnotationProperty("timeout", 30)));
         final Field fieldK = mockField(ROW_INT,
             mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, true)));
 

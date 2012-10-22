@@ -3,18 +3,22 @@ package pl.com.it_crowd.findbugs;
 import org.apache.bcel.Constants;
 import org.apache.bcel.classfile.AnnotationElementValue;
 import org.apache.bcel.classfile.AnnotationEntry;
+import org.apache.bcel.classfile.ArrayElementValue;
 import org.apache.bcel.classfile.Attribute;
 import org.apache.bcel.classfile.Constant;
 import org.apache.bcel.classfile.ConstantClass;
+import org.apache.bcel.classfile.ConstantDouble;
+import org.apache.bcel.classfile.ConstantFloat;
+import org.apache.bcel.classfile.ConstantInteger;
+import org.apache.bcel.classfile.ConstantLong;
 import org.apache.bcel.classfile.ConstantPool;
 import org.apache.bcel.classfile.ConstantUtf8;
+import org.apache.bcel.classfile.ElementValue;
 import org.apache.bcel.classfile.ElementValuePair;
 import org.apache.bcel.classfile.Field;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
-
-import java.util.ArrayList;
-import java.util.StringTokenizer;
+import org.apache.bcel.classfile.SimpleElementValue;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -22,27 +26,27 @@ import static org.mockito.Mockito.when;
 public final class BcelMockHelper {
 // -------------------------- STATIC METHODS --------------------------
 
-    public static AnnotationEntry mockAnnotationEntry(String annotationType, String... properties)
+    public static ElementValuePair makeAnnotationProperty(String name, Object value)
     {
-        return mockAnnotationEntry(annotationType, true, properties);
+        return new ElementValuePair(0, toElementValue(value), mockConstantPool(0, Constants.CONSTANT_Utf8, new ConstantUtf8(name)));
     }
 
-    public static AnnotationEntry mockAnnotationEntry(String annotationType, boolean runtimeVisible, String... properties)
+    public static ElementValuePair makeAnnotationProperty(String name, Object... value)
+    {
+        return new ElementValuePair(0, toElementValue(value), mockConstantPool(0, Constants.CONSTANT_Utf8, new ConstantUtf8(name)));
+    }
+
+    public static AnnotationEntry mockAnnotationEntry(String annotationType, ElementValuePair... valuePairs)
+    {
+        return mockAnnotationEntry(annotationType, true, valuePairs);
+    }
+
+    public static AnnotationEntry mockAnnotationEntry(String annotationType, boolean runtimeVisible, ElementValuePair... valuePairs)
     {
         final AnnotationEntry entry = mock(AnnotationEntry.class);
         when(entry.getAnnotationType()).thenReturn(annotationType);
         when(entry.isRuntimeVisible()).thenReturn(runtimeVisible);
-        final ArrayList<ElementValuePair> elementValuePairs = new ArrayList<ElementValuePair>();
-        for (String property : properties) {
-            final StringTokenizer tokenizer = new StringTokenizer(property, "=");
-            final String key = tokenizer.nextToken();
-            final String value = tokenizer.nextToken();
-            final AnnotationElementValue elementValue = mock(AnnotationElementValue.class);
-            when(elementValue.stringifyValue()).thenReturn(value);
-            final ElementValuePair pair = new ElementValuePair(0, elementValue, mockConstantPool(0, Constants.CONSTANT_Utf8, new ConstantUtf8(key)));
-            elementValuePairs.add(pair);
-        }
-        when(entry.getElementValuePairs()).thenReturn(elementValuePairs.toArray(new ElementValuePair[elementValuePairs.size()]));
+        when(entry.getElementValuePairs()).thenReturn(valuePairs);
         return entry;
     }
 
@@ -54,6 +58,7 @@ public final class BcelMockHelper {
                 when(pool.getConstantString(entry.index, entry.tag)).thenCallRealMethod();
             }
             when(pool.getConstant(entry.index, entry.tag)).thenReturn(entry.value);
+            when(pool.getConstant(entry.index)).thenReturn(entry.value);
         }
         return pool;
     }
@@ -77,6 +82,42 @@ public final class BcelMockHelper {
         final ConstantPool constantPool = mockConstantPool(new ConstantPoolEntry(0, Constants.CONSTANT_Class, new ConstantClass(1)),
             new ConstantPoolEntry(1, Constants.CONSTANT_Utf8, new ConstantUtf8(className)));
         return new JavaClass(0, 0, "", 0, 0, 0, constantPool, new int[0], new Field[0], new Method[0], new Attribute[]{annotations});
+    }
+
+    public static ElementValue toElementValue(Object value)
+    {
+        if (value instanceof AnnotationEntry) {
+            return new AnnotationElementValue(ElementValue.ANNOTATION, (AnnotationEntry) value, null);
+        } else if (value instanceof Object[]) {
+            ElementValue[] elementValues = new ElementValue[((Object[]) value).length];
+            Object[] valueArray = (Object[]) value;
+            for (int i = 0, value1Length = (valueArray).length; i < value1Length; i++) {
+                elementValues[i] = toElementValue(valueArray[i]);
+            }
+            return new ArrayElementValue(ElementValue.ARRAY, elementValues, null);
+        } else if (value instanceof Integer) {
+            return new SimpleElementValue(ElementValue.PRIMITIVE_INT, 0, mockConstantPool(0, Constants.CONSTANT_Integer, new ConstantInteger((Integer) value)));
+        } else if (value instanceof Long) {
+            return new SimpleElementValue(ElementValue.PRIMITIVE_LONG, 0, mockConstantPool(0, Constants.CONSTANT_Long, new ConstantLong((Long) value)));
+        } else if (value instanceof Double) {
+            return new SimpleElementValue(ElementValue.PRIMITIVE_DOUBLE, 0, mockConstantPool(0, Constants.CONSTANT_Double, new ConstantDouble((Double) value)));
+        } else if (value instanceof Float) {
+            return new SimpleElementValue(ElementValue.PRIMITIVE_FLOAT, 0, mockConstantPool(0, Constants.CONSTANT_Float, new ConstantFloat((Float) value)));
+        } else if (value instanceof Short) {
+            return new SimpleElementValue(ElementValue.PRIMITIVE_SHORT, 0, mockConstantPool(0, Constants.CONSTANT_Integer, new ConstantInteger((Short) value)));
+        } else if (value instanceof Byte) {
+            return new SimpleElementValue(ElementValue.PRIMITIVE_SHORT, 0, mockConstantPool(0, Constants.CONSTANT_Integer, new ConstantInteger((Byte) value)));
+        } else if (value instanceof Character) {
+            return new SimpleElementValue(ElementValue.PRIMITIVE_CHAR, 0,
+                mockConstantPool(0, Constants.CONSTANT_Integer, new ConstantInteger((Character) value)));
+        } else if (value instanceof Boolean) {
+            return new SimpleElementValue(ElementValue.PRIMITIVE_BOOLEAN, 0,
+                mockConstantPool(0, Constants.CONSTANT_Integer, new ConstantInteger(((Boolean) value) ? 1 : 0)));
+        } else if (value instanceof String) {
+            return new SimpleElementValue(ElementValue.STRING, 0, mockConstantPool(0, Constants.CONSTANT_Utf8, new ConstantUtf8((String) value)));
+        } else {
+            throw new IllegalArgumentException("Unsupported type " + (value == null ? null : value.getClass().getCanonicalName()));
+        }
     }
 
 // --------------------------- CONSTRUCTORS ---------------------------

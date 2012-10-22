@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@SuppressWarnings("UnusedDeclaration")
 @Table(name = "NotEmptyTestingEntity")
 @Entity
 public class NotEmptyTestingEntity {

@@ -1,18 +1,24 @@
 package pl.com.it_crowd.findbugs;
 
 import org.apache.bcel.classfile.AnnotationEntry;
+import org.apache.bcel.classfile.ElementValue;
 import org.apache.bcel.classfile.FieldOrMethod;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.generic.Type;
 import org.apache.commons.lang.StringUtils;
 
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_LENGTH;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_DEFAULT_LENGTH;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_COLUMN_DEFAULT_NULLABLE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_ENTITY;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_ID;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_JOIN_COLUMN;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_JOIN_TABLE;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_JOIN_TABLE_ATTRIBUTE_INVERSE_JOIN_COLUMNS;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_JOIN_TABLE_ATTRIBUTE_JOIN_COLUMNS;
+import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_JOIN_TABLE_ATTRIBUTE_NAME;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_MANY_TO_ONE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_MANY_TO_ONE_ATTRIBUTE_OPTIONAL;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_PERSISTENCE_MANY_TO_ONE_DEFAULT_OPTIONAL;
@@ -22,15 +28,70 @@ import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_SIZE;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_SIZE_ATTRIBUTE_MAX;
 import static pl.com.it_crowd.findbugs.Annotations.JAVAX_VALIDATION_CONSTRAINTS_SIZE_DEFAULT_MAX;
+import static pl.com.it_crowd.findbugs.Annotations.ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY;
+import static pl.com.it_crowd.findbugs.Annotations.ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_INVERSE_NAME;
+import static pl.com.it_crowd.findbugs.Annotations.ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_NAME;
+import static pl.com.it_crowd.findbugs.BcelHelper.extractAttributeStringValue;
+import static pl.com.it_crowd.findbugs.BcelHelper.getAnnotationPropertyValue;
+import static pl.com.it_crowd.findbugs.BcelHelper.getAnnotationPropertyValue2;
 import static pl.com.it_crowd.findbugs.BcelHelper.getType;
 import static pl.com.it_crowd.findbugs.BcelHelper.isArray;
 import static pl.com.it_crowd.findbugs.BcelHelper.isCollection;
 import static pl.com.it_crowd.findbugs.BcelHelper.isJavaxPersistenceColumnOrJoinColumn;
 import static pl.com.it_crowd.findbugs.BcelHelper.isMap;
+import static pl.com.it_crowd.findbugs.BcelHelper.isSingleValue;
 import static pl.com.it_crowd.findbugs.BcelHelper.isString;
 
 public final class Validator {
 // -------------------------- STATIC METHODS --------------------------
+
+    public static boolean validateForeignKey(FieldOrMethod member, String tableName)
+    {
+        boolean foreignKeyAnnotationPresent = false;
+        boolean joinColumnAnnotationPresent = false;
+        boolean joinTableAnnotationPresent = false;
+        boolean fkNameOK;
+        boolean fkInverseNameOK;
+        boolean fkInverseNameAttributeSet;
+        boolean singleJoinColumn = false;
+        String expectedFkName = "";
+        String expectedFkInverseName = "";
+        String fkName = "";
+        String fkInverseName = "";
+        String joinColumnName;
+        String inverseJoinColumnName;
+        for (AnnotationEntry entry : member.getAnnotationEntries()) {
+            if (JAVAX_PERSISTENCE_JOIN_COLUMN.equals(entry.getAnnotationType())) {
+                joinColumnAnnotationPresent = true;
+                joinColumnName = getAnnotationPropertyValue(entry, JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME);
+                expectedFkName = "FK___" + tableName + "___" + joinColumnName;
+            } else if (JAVAX_PERSISTENCE_JOIN_TABLE.equals(entry.getAnnotationType())) {
+                joinTableAnnotationPresent = true;
+                final ElementValue joinColumns = getAnnotationPropertyValue2(entry, JAVAX_PERSISTENCE_JOIN_TABLE_ATTRIBUTE_JOIN_COLUMNS);
+                final ElementValue inverseJoinColumns = getAnnotationPropertyValue2(entry, JAVAX_PERSISTENCE_JOIN_TABLE_ATTRIBUTE_INVERSE_JOIN_COLUMNS);
+                singleJoinColumn = isSingleValue(joinColumns);
+                if (singleJoinColumn) {
+                    String joinTableName = getAnnotationPropertyValue(entry, JAVAX_PERSISTENCE_JOIN_TABLE_ATTRIBUTE_NAME);
+                    joinColumnName = extractAttributeStringValue(joinColumns, JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME);
+                    inverseJoinColumnName = extractAttributeStringValue(inverseJoinColumns, JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NAME);
+                    expectedFkName = "FK___" + joinTableName + "___" + joinColumnName;
+                    expectedFkInverseName = "FK___" + joinTableName + "___" + inverseJoinColumnName;
+                }
+            } else if (ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY.equals(entry.getAnnotationType())) {
+                foreignKeyAnnotationPresent = true;
+                fkName = getAnnotationPropertyValue(entry, ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_NAME);
+                fkInverseName = getAnnotationPropertyValue(entry, ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_INVERSE_NAME);
+            }
+        }
+        fkNameOK = expectedFkName.equals(fkName);
+        fkInverseNameOK = expectedFkInverseName.equals(fkInverseName);
+        fkInverseNameAttributeSet = fkInverseName != null;
+        if (joinColumnAnnotationPresent) {
+            return foreignKeyAnnotationPresent && fkNameOK && !fkInverseNameAttributeSet;
+        } else {
+            return !joinTableAnnotationPresent || !singleJoinColumn || foreignKeyAnnotationPresent && fkNameOK && fkInverseNameOK;
+        }
+    }
 
     public static boolean validateManyToOne(FieldOrMethod member)
     {

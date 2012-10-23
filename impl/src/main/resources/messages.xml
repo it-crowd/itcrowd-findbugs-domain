@@ -6,32 +6,32 @@
         <Details>IT Crowd domain annotation checks</Details>
     </Plugin>
 
-    <Detector class="pl.com.it_crowd.findbugs.ForeignKeyInconsistency">
+    <Detector class="pl.itcrowd.findbugs.domain.ForeignKeyInconsistency">
         <Details>
             ForeignKeyInconsistency
         </Details>
     </Detector>
-    <Detector class="pl.com.it_crowd.findbugs.NotNullInconsistency">
+    <Detector class="pl.itcrowd.findbugs.domain.NotNullInconsistency">
         <Details>
             NotNullInconsistency
         </Details>
     </Detector>
-    <Detector class="pl.com.it_crowd.findbugs.NotEmptyInconsistency">
+    <Detector class="pl.itcrowd.findbugs.domain.NotEmptyInconsistency">
         <Details>
             NotEmptyInconsistency
         </Details>
     </Detector>
-    <Detector class="pl.com.it_crowd.findbugs.ManyToOneInconsistency">
+    <Detector class="pl.itcrowd.findbugs.domain.ManyToOneInconsistency">
         <Details>
             ManyToOneInconsistency
         </Details>
     </Detector>
-    <Detector class="pl.com.it_crowd.findbugs.SizeInconsistency">
+    <Detector class="pl.itcrowd.findbugs.domain.SizeInconsistency">
         <Details>
             SizeInconsistency
         </Details>
     </Detector>
-    <Detector class="pl.com.it_crowd.findbugs.TableInconsistency">
+    <Detector class="pl.itcrowd.findbugs.domain.TableInconsistency">
         <Details>
             EntityVsTableInconsistency
         </Details>

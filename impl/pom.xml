@@ -30,4 +30,16 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>itcrowd.pl</id>
+            <name>IT Crowd Repository</name>
+            <url>http://artifactory.itcrowd.pl/libs-release-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>itcrowd.pl</id>
+            <name>IT Crowd Repository</name>
+            <url>http://artifactory.itcrowd.pl/libs-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

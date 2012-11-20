@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>pl.itcrowd.findbugs.domain</groupId>
     <artifactId>itcrowd-findbugs-domain-aggregator</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
         <module>impl</module>
@@ -33,6 +33,6 @@
         <connection>scm:git:git://github.com/it-crowd/itcrowd-findbugs-domain.git</connection>
         <developerConnection>scm:git:https://github.com/it-crowd/itcrowd-findbugs-domain.git</developerConnection>
         <url>https://github.com/it-crowd/itcrowd-findbugs-domain</url>
-      <tag>itcrowd-findbugs-domain-aggregator-1.0.0</tag>
+      <tag>HEAD</tag>
   </scm>
 </project>

@@ -30,4 +30,6 @@ public interface Annotations {
     static final String ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY = "Lorg/hibernate/annotations/ForeignKey;";
     static final String ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_INVERSE_NAME = "inverseName";
     static final String ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_NAME = "name";
+    static final String ORG_HIBERNATE_ANNOTATIONS_TYPE = "Lorg/hibernate/annotations/Type;";
+    static final String ORG_HIBERNATE_ANNOTATIONS_TYPE_ATTRIBUTE_TYPE = "type";
 }

@@ -31,6 +31,7 @@ import static pl.itcrowd.findbugs.domain.Annotations.JAVAX_VALIDATION_CONSTRAINT
 import static pl.itcrowd.findbugs.domain.Annotations.ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY;
 import static pl.itcrowd.findbugs.domain.Annotations.ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_INVERSE_NAME;
 import static pl.itcrowd.findbugs.domain.Annotations.ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_NAME;
+import static pl.itcrowd.findbugs.domain.Annotations.ORG_HIBERNATE_ANNOTATIONS_TYPE;
 import static pl.itcrowd.findbugs.domain.BcelHelper.extractAttributeStringValue;
 import static pl.itcrowd.findbugs.domain.BcelHelper.getAnnotationPropertyValue;
 import static pl.itcrowd.findbugs.domain.BcelHelper.getAnnotationPropertyValue2;
@@ -163,6 +164,7 @@ public final class Validator {
     {
         boolean columnAnnotationPresent = false;
         boolean sizeAnnotationPresent = false;
+        boolean orgHibernateAnnotationsTypePresent = false;
         String columnLength = null;
         String sizeMax = null;
         for (AnnotationEntry entry : member.getAnnotationEntries()) {
@@ -173,6 +175,8 @@ public final class Validator {
             } else if (isJavaxPersistenceColumnOrJoinColumn(entry)) {
                 columnAnnotationPresent = true;
                 columnLength = BcelHelper.getAnnotationPropertyValue(entry, JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_LENGTH, JAVAX_PERSISTENCE_COLUMN_DEFAULT_LENGTH);
+            } else if(ORG_HIBERNATE_ANNOTATIONS_TYPE.equals(entry.getAnnotationType())) {
+                orgHibernateAnnotationsTypePresent = true;
             }
         }
         Type type = getType(member);
@@ -183,7 +187,7 @@ public final class Validator {
         } else if (sizeAnnotationPresent) {
             return sizeCandidate && (!string || columnLength.equals(sizeMax));
         } else {
-            return !string;
+            return !string || orgHibernateAnnotationsTypePresent;
         }
     }
 

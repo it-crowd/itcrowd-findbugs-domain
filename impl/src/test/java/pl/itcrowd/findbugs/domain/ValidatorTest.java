@@ -27,6 +27,8 @@ import static pl.itcrowd.findbugs.domain.Annotations.JAVAX_VALIDATION_CONSTRAINT
 import static pl.itcrowd.findbugs.domain.Annotations.ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY;
 import static pl.itcrowd.findbugs.domain.Annotations.ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_INVERSE_NAME;
 import static pl.itcrowd.findbugs.domain.Annotations.ORG_HIBERNATE_ANNOTATIONS_FOREIGNKEY_ATTRIBUTE_NAME;
+import static pl.itcrowd.findbugs.domain.Annotations.ORG_HIBERNATE_ANNOTATIONS_TYPE;
+import static pl.itcrowd.findbugs.domain.Annotations.ORG_HIBERNATE_ANNOTATIONS_TYPE_ATTRIBUTE_TYPE;
 import static pl.itcrowd.findbugs.domain.BcelMockHelper.makeAnnotationProperty;
 import static pl.itcrowd.findbugs.domain.BcelMockHelper.mockAnnotationEntry;
 import static pl.itcrowd.findbugs.domain.BcelMockHelper.mockField;
@@ -283,6 +285,10 @@ public class ValidatorTest {
             mockAnnotationEntry(ORG_JUNIT_TEST, makeAnnotationProperty("timeout", 30)));
         final Field fieldK = mockField(ROW_INT,
             mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, true)));
+        final Field fieldL = mockField(JAVA_LANG_STRING,
+            mockAnnotationEntry(JAVAX_PERSISTENCE_COLUMN, makeAnnotationProperty(JAVAX_PERSISTENCE_COLUMN_ATTRIBUTE_NULLABLE, false)),
+            mockAnnotationEntry(ORG_HIBERNATE_ANNOTATIONS_TYPE, makeAnnotationProperty(ORG_HIBERNATE_ANNOTATIONS_TYPE_ATTRIBUTE_TYPE, "org.hibernate.type.TextType"))
+            );
 
 
 //        When
@@ -297,6 +303,7 @@ public class ValidatorTest {
         final boolean resultI = Validator.validateSize(fieldI);
         final boolean resultJ = Validator.validateSize(fieldJ);
         final boolean resultK = Validator.validateSize(fieldK);
+        final boolean resultL = Validator.validateSize(fieldL);
 
 //        Then
         assertTrue(resultA);
@@ -310,6 +317,7 @@ public class ValidatorTest {
         assertFalse(resultI);
         assertTrue(resultJ);
         assertTrue(resultK);
+        assertTrue(resultL);
     }
 
     @Test

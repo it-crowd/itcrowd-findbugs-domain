@@ -16,7 +16,9 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
                     <pushChanges>false</pushChanges>
+                    <localCheckout>true</localCheckout>
                 </configuration>
             </plugin>
             <plugin>
@@ -33,6 +35,6 @@
         <connection>scm:git:git://github.com/it-crowd/itcrowd-findbugs-domain.git</connection>
         <developerConnection>scm:git:https://github.com/it-crowd/itcrowd-findbugs-domain.git</developerConnection>
         <url>https://github.com/it-crowd/itcrowd-findbugs-domain</url>
-      <tag>HEAD</tag>
+        <tag>HEAD</tag>
   </scm>
 </project>
